@@ -18,8 +18,8 @@ export function ProductsSection({ index = "05" }: { index?: string }) {
           </div>
           <Reveal className="lg:col-span-5">
             <p className="text-lead text-gray">
-              Food-tech and service robotics designed by Synthea — available to rent for events, restaurants, hospitality
-              and production.
+              Food-tech and service robotics designed by Synthea — available to rent for restaurants, hospitality, retail
+              and production, with a minimum rental period of 6 months.
             </p>
           </Reveal>
         </div>

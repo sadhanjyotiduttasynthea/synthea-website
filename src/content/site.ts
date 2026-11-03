@@ -28,13 +28,13 @@ export const site = {
     country: "France",
   },
   /**
-   * Supporters shown on the homepage and About page. To display official
-   * logos, add the files supplied by each organisation to
-   * public/images/supporters/ and set `logo` (e.g. "/images/supporters/genopole.svg").
+   * Supporters shown on the homepage and About page. Their official logos are
+   * picked up automatically from public/images/supporters/ (see
+   * scripts/prepare-brand-assets.mjs); until then their names are shown.
    */
   supporters: [
-    { name: "Genopole", url: "https://www.genopole.com", logo: null as string | null },
-    { name: "AgroParisTech", url: "https://www.agroparistech.fr", logo: null as string | null },
+    { name: "Genopole", url: "https://www.genopole.com" },
+    { name: "AgroParisTech", url: "https://www.agroparistech.fr" },
   ],
   legal: {
     /** e.g. "SAS", "SASU", "EURL" */

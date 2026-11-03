@@ -47,3 +47,6 @@ next-env.d.ts
 public/api/contact-config.php
 synthea-contact-config.php
 synthea-rate-limit/
+
+# generated logo files (built from public/images/brand and supporters)
+public/images/generated/

@@ -224,11 +224,16 @@ $designFocus = [
     'other' => 'Other',
 ];
 $budgets = [
-    'under-1k' => 'Under €1,000',
-    '1k-5k' => '€1,000–€5,000',
-    '5k-20k' => '€5,000–€20,000',
-    'over-20k' => 'Above €20,000',
+    '5k-10k' => '€5,000–€10,000',
+    '10k-25k' => '€10,000–€25,000',
+    '25k-50k' => '€25,000–€50,000',
+    'over-50k' => 'Above €50,000',
     'not-defined' => 'Not defined yet',
+];
+$rentalPeriods = [
+    '6-months' => '6 months (minimum)',
+    '12-months' => '12 months',
+    'over-12-months' => 'More than 12 months',
 ];
 $timelines = [
     'asap' => 'As soon as possible',
@@ -253,6 +258,7 @@ $data = [
     'inquiryType' => field('inquiryType'),
     'product' => field('product'),
     'designFocus' => field('designFocus'),
+    'rentalPeriod' => field('rentalPeriod'),
     'rentalDates' => field('rentalDates'),
     'location' => field('location'),
     'fullName' => field('fullName'),
@@ -273,6 +279,9 @@ $isRent = $data['inquiryType'] === 'rent';
 $isDesign = $data['inquiryType'] === 'engineering-design';
 if ($isRent && !isset($products[$data['product']])) {
     $errors['product'] = 'Please choose which product you would like to rent.';
+}
+if ($isRent && !isset($rentalPeriods[$data['rentalPeriod']])) {
+    $errors['rentalPeriod'] = 'Please choose a rental period (minimum 6 months).';
 }
 if ($isDesign && $data['designFocus'] !== '' && !isset($designFocus[$data['designFocus']])) {
     $errors['designFocus'] = 'Please choose a valid option.';
@@ -376,7 +385,10 @@ if (!is_configured($config)) {
 $requestLabel = $inquiryTypes[$data['inquiryType']];
 if ($isRent) {
     $requestLabel = 'Rental — ' . $products[$data['product']];
-} elseif ($isDesign && $data['designFocus'] !== '') {
+} elseif ($isRent && !isset($rentalPeriods[$data['rentalPeriod']])) {
+    $errors['rentalPeriod'] = 'Please choose a rental period (minimum 6 months).';
+}
+if ($isDesign && $data['designFocus'] !== '') {
     $requestLabel = 'Engineering design — ' . $designFocus[$data['designFocus']];
 }
 
@@ -386,7 +398,8 @@ $rows = [
     'Email' => $data['email'],
     'Company' => $data['company'] !== '' ? $data['company'] : '—',
     'Phone' => $data['phone'] !== '' ? $data['phone'] : '—',
-    'Rental dates' => $isRent && $data['rentalDates'] !== '' ? $data['rentalDates'] : '—',
+    'Rental period' => $isRent ? $rentalPeriods[$data['rentalPeriod']] : '—',
+    'Preferred start' => $isRent && $data['rentalDates'] !== '' ? $data['rentalDates'] : '—',
     'Location / venue' => $isRent && $data['location'] !== '' ? $data['location'] : '—',
     'Budget' => $data['budget'] !== '' ? $budgets[$data['budget']] : '—',
     'Timeline' => $data['timeline'] !== '' ? $timelines[$data['timeline']] : '—',

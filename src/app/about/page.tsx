@@ -37,11 +37,10 @@ const principles = [
 ];
 
 const expertiseAreas = [
-  "Strategic vision",
   "Team leadership",
+  "Building from scratch",
+  "Sustainable innovation",
   "Partnerships",
-  "Client relationships",
-  "Innovation management",
 ];
 
 export default function AboutPage() {
@@ -103,7 +102,7 @@ export default function AboutPage() {
             </p>
             <p>
               We work in three complementary ways. We develop our own technologies and machines — such as the Chocolate 3D
-              Food Printer and the Designer Robot — we rent our machines for events and venues, and we provide engineering
+              Food Printer and the Designer Robot — we rent our machines to businesses and venues, and we provide engineering
               and machine design services to companies, entrepreneurs, research institutions and industrial partners.
             </p>
             <p>
@@ -139,17 +138,17 @@ export default function AboutPage() {
             <p className="mt-3 font-mono text-sm uppercase tracking-[0.14em] text-red">{site.founder.role}</p>
             <Reveal className="mt-8 space-y-5 text-lg leading-relaxed text-gray">
               <p>
-                Sadhan Jyoti Dutta, PhD, is the CEO of Synthea Advanced Technologies and brings more than three years of
+                Sadhan Jyoti Dutta, PhD, is the CEO of Synthea Advanced Technologies, with more than three years of
                 leadership experience.
               </p>
               <p>
-                He sets the company&apos;s vision and strategy, builds and guides its team, and leads its relationships
-                with clients, partners and supporters. His leadership is built on clear direction, accountability and a
-                commitment to turning ambitious ideas into results that create real value for customers.
+                He likes to build things from scratch — useful technologies that are sustainable and good for the planet.
+                His aim is simple: bring innovation that makes everyday life a little easier and creates real value for
+                society.
               </p>
               <p>
-                Under his leadership, Synthea is growing as a company that brings innovative products, rental services and
-                engineering solutions to businesses and institutions.
+                He leads Synthea&apos;s vision and team, and works closely with clients, partners and supporters to turn good
+                ideas into products people can use.
               </p>
             </Reveal>
             <ul className="mt-10 flex flex-wrap gap-2">

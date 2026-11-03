@@ -1,7 +1,32 @@
+import Image from "next/image";
+import { brandAssets } from "@/content/brand-assets.generated";
 import { cn } from "@/lib/cn";
 
-/** SYNTHEA wordmark with a precise mechanical mark. */
-export function Logo({ className, tone = "dark" }: { className?: string; tone?: "dark" | "light" }) {
+/**
+ * SYNTHEA logo. Uses the official logo file when it has been uploaded to
+ * public/images/brand/ (see scripts/prepare-brand-assets.mjs); otherwise a
+ * simple wordmark. `size="lg"` is used in the footer.
+ */
+export function Logo({ className, tone = "dark", size = "md" }: { className?: string; tone?: "dark" | "light"; size?: "md" | "lg" }) {
+  const asset = brandAssets.synthea;
+  if (asset) {
+    return (
+      <Image
+        src={asset.src}
+        alt="SYNTHEA Advanced Technologies"
+        width={asset.width}
+        height={asset.height}
+        priority={size === "md"}
+        className={cn(
+          "w-auto",
+          size === "lg" ? "h-14" : "h-10",
+          // The processed logo is dark; invert it on dark backgrounds.
+          tone === "light" && "invert",
+          className,
+        )}
+      />
+    );
+  }
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
       <svg viewBox="0 0 28 28" aria-hidden className="size-7 shrink-0">

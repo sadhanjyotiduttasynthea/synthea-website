@@ -8,7 +8,7 @@ export function SiteFooter() {
     <footer className="dark-surface border-t border-line-dark bg-night text-white">
       <div className="container-site grid gap-12 py-16 md:grid-cols-12 lg:py-20">
         <div className="md:col-span-5">
-          <Logo tone="light" />
+          <Logo tone="light" size="lg" />
           <p className="mt-6 max-w-sm text-2xl font-medium leading-tight tracking-tight">{site.tagline}</p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-metal">{site.positioning}</p>
           <a
