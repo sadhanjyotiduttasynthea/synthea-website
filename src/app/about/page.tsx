@@ -37,12 +37,11 @@ const principles = [
 ];
 
 const expertiseAreas = [
-  "Process engineering",
-  "Thermal processes",
-  "Computational simulation",
-  "Experimental engineering",
-  "Robotics & machine design",
-  "Technology development",
+  "Strategic vision",
+  "Team leadership",
+  "Partnerships",
+  "Client relationships",
+  "Innovation management",
 ];
 
 export default function AboutPage() {
@@ -140,13 +139,17 @@ export default function AboutPage() {
             <p className="mt-3 font-mono text-sm uppercase tracking-[0.14em] text-red">{site.founder.role}</p>
             <Reveal className="mt-8 space-y-5 text-lg leading-relaxed text-gray">
               <p>
-                Sadhan Jyoti Dutta holds a PhD in Process Engineering, with research experience in thermal processes,
-                computational simulation, experimental engineering and technology development.
+                Sadhan Jyoti Dutta, PhD, is the CEO of Synthea Advanced Technologies and brings more than three years of
+                leadership experience.
               </p>
               <p>
-                As CEO, he leads Synthea&apos;s engineering — robotic systems, food-tech machines, machine design and
-                simulation. Connecting physical experiments with computational models shapes how Synthea works: understand
-                the physics, model it, then design and build with confidence.
+                He sets the company&apos;s vision and strategy, builds and guides its team, and leads its relationships
+                with clients, partners and supporters. His leadership is built on clear direction, accountability and a
+                commitment to turning ambitious ideas into results that create real value for customers.
+              </p>
+              <p>
+                Under his leadership, Synthea is growing as a company that brings innovative products, rental services and
+                engineering solutions to businesses and institutions.
               </p>
             </Reveal>
             <ul className="mt-10 flex flex-wrap gap-2">
