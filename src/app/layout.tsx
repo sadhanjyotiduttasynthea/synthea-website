@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   description: site.description,
   applicationName: site.name,
-  authors: [{ name: site.founder.name }],
+  authors: [{ name: site.name }],
   creator: site.name,
   keywords: [
     "Robotics Engineering France",

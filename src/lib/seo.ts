@@ -44,7 +44,6 @@ export function organizationJsonLd() {
     slogan: site.tagline,
     description: site.description,
     email: site.email,
-    founder: { "@type": "Person", name: site.founder.name, jobTitle: site.founder.role },
     address: {
       "@type": "PostalAddress",
       streetAddress: `${site.address.building}, ${site.address.street}`,
