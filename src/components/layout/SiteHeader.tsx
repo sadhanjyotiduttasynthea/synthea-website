@@ -107,7 +107,8 @@ export function SiteHeader() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 6 }}
                           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                          className="absolute left-1/2 top-full w-[34rem] -translate-x-1/2 pt-3"
+                          className="absolute left-1/2 top-full w-[34rem] pt-3"
+                          style={{ x: "-50%" }}
                         >
                           <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-[0_24px_60px_-20px_rgba(17,17,17,0.25)]">
                             <ul className="grid grid-cols-2 gap-px bg-line">

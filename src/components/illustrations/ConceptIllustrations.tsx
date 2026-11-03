@@ -67,18 +67,18 @@ export function DesignerRobotConcept({ tone = "light" }: { tone?: "light" | "dar
       <path d="M311 320 V 360" stroke="#D71932" strokeWidth="1" strokeDasharray="3 4" className="animate-dash" />
 
       {/* Callout lines */}
-      <g className="font-mono" fontSize="11" letterSpacing="1.4" fill={tone === "dark" ? "#AEB6C2" : "#6B7280"}>
+      <g className="font-mono" fontSize="10" letterSpacing="1" fill={tone === "dark" ? "#AEB6C2" : "#6B7280"}>
         <circle cx="404" cy="226" r="3.5" fill="#D71932" />
-        <path d="M407 226 H 560" stroke={ink} strokeOpacity="0.4" />
-        <text x="470" y="218">MOTION SYSTEM</text>
+        <path d="M407 226 H 632" stroke={ink} strokeOpacity="0.4" fill="none" />
+        <text x="534" y="218">MOTION SYSTEM</text>
 
         <circle cx="346" cy="206" r="3.5" fill="#D71932" />
-        <path d="M349 206 L 380 150 H 560" stroke={ink} strokeOpacity="0.4" />
-        <text x="440" y="142">DEPOSITION HEAD</text>
+        <path d="M349 206 L 380 150 H 632" stroke={ink} strokeOpacity="0.4" fill="none" />
+        <text x="534" y="142">DEPOSITION HEAD</text>
 
         <circle cx="376" cy="372" r="3.5" fill="#D71932" />
-        <path d="M379 372 L 420 330 H 560" stroke={ink} strokeOpacity="0.4" />
-        <text x="440" y="322">DIGITAL PATTERN</text>
+        <path d="M379 372 L 420 330 H 632" stroke={ink} strokeOpacity="0.4" fill="none" />
+        <text x="534" y="322">DIGITAL PATTERN</text>
 
         <text x="40" y="40" fill="#D71932">CONCEPT ILLUSTRATION</text>
       </g>

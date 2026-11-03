@@ -13,7 +13,7 @@ export function SectionLabel({ index, children, tone = "light", className }: Pro
       )}
     >
       <span aria-hidden className="h-px w-8 bg-red" />
-      {index && <span className="text-red">{index}</span>}
+      {index && <span className={tone === "dark" ? "text-red-bright" : "text-red"}>{index}</span>}
       {index && <span aria-hidden>/</span>}
       <span>{children}</span>
     </p>

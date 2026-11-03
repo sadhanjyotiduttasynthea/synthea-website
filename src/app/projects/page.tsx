@@ -25,8 +25,11 @@ export default function ProjectsPage() {
           </p>
         }
       />
-      <section aria-label="Project list" className="section-y bg-surface">
+      <section aria-labelledby="project-list-title" className="section-y bg-surface">
         <div className="container-site">
+          <h2 id="project-list-title" className="sr-only">
+            Project list
+          </h2>
           <ProjectGallery />
         </div>
       </section>

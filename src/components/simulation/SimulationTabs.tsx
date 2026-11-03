@@ -300,7 +300,7 @@ export function SimulationTabs() {
                 )}
               >
                 <span className={cn("hidden h-px transition-all duration-500 lg:block", selected ? "w-10 bg-red" : "w-4 bg-metal/40")} />
-                <span className="text-red">0{i + 1}</span>
+                <span className="text-red-bright">0{i + 1}</span>
                 {m.label}
               </button>
             );
@@ -350,7 +350,7 @@ export function SimulationTabs() {
               <span aria-hidden className="h-1.5 w-28 rounded-full" style={{ background: LEGEND[active] }} />
               <span>{current.legend[1]}</span>
             </div>
-            <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-red">
+            <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-red-bright">
               Illustrative visualization — not validated simulation data
             </p>
           </div>

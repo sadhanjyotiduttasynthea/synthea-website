@@ -63,7 +63,7 @@ export function EngineeringProcess() {
                   <span
                     className={cn(
                       "text-2xl font-medium tracking-tight transition-colors sm:text-3xl",
-                      selected ? "text-ink" : "text-metal group-hover:text-ink",
+                      selected ? "text-ink" : "text-gray group-hover:text-ink",
                     )}
                   >
                     {s.title}

@@ -9,7 +9,10 @@
   --color-surface: #f5f6f7;
   --color-red: #d71932;
   --color-red-dark: #b3132a;
-  --color-gray: #6b7280;
+  /* Brighter red for small text on dark backgrounds (AA contrast) */
+  --color-red-bright: #ff5a6e;
+  /* Secondary gray #6B7280, darkened slightly for WCAG AA on the #F5F6F7 surface */
+  --color-gray: #646b78;
   --color-metal: #aeb6c2;
   --color-night: #101114;
   --color-night-2: #17191e;

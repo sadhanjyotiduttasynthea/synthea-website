@@ -55,8 +55,6 @@ export function ContactForm({ contactEmail }: Props) {
   // Record when the form became interactive (used for spam timing) and
   // preselect a category from ?category=… links on service cards.
   useEffect(() => {
-    const stamp = document.getElementById("form-started-at") as HTMLInputElement | null;
-    if (stamp) stamp.value = String(Date.now());
     const category = new URLSearchParams(window.location.search).get("category");
     if (isProjectCategory(category)) setValue("category", category);
 
@@ -68,6 +66,14 @@ export function ContactForm({ contactEmail }: Props) {
       .catch(() => {});
     return () => controller.abort();
   }, [setValue]);
+
+  // Stamp the time the form became visible (spam timing check). Stored as a
+  // data attribute, which React does not manage, so re-renders cannot reset it.
+  // Re-runs when the form is shown again after "Send another inquiry".
+  useEffect(() => {
+    const form = document.getElementById("inquiry");
+    if (form && !form.dataset.startedAt) form.dataset.startedAt = String(Date.now());
+  }, [status]);
 
   useEffect(() => {
     if (status === "success") successRef.current?.focus();
@@ -101,7 +107,7 @@ export function ContactForm({ contactEmail }: Props) {
     for (const [key, value] of Object.entries(data)) {
       if (value !== undefined) body.append(key, String(value));
     }
-    body.append("startedAt", (document.getElementById("form-started-at") as HTMLInputElement | null)?.value ?? "0");
+    body.append("startedAt", document.getElementById("inquiry")?.dataset.startedAt ?? "0");
     const honeypot = (document.getElementById("website") as HTMLInputElement | null)?.value ?? "";
     body.append("website", honeypot);
     if (attachmentsEnabled && file) body.append("attachment", file);
@@ -256,7 +262,6 @@ export function ContactForm({ contactEmail }: Props) {
         <div aria-hidden="true" className="absolute left-[-10000px] h-px w-px overflow-hidden">
           <label htmlFor="website">Website</label>
           <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
-          <input id="form-started-at" type="hidden" defaultValue="0" />
         </div>
 
         <div className="sm:col-span-2">

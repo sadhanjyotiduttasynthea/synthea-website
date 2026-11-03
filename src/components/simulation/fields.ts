@@ -75,7 +75,7 @@ export function thermalStep(T: Float32Array, mask: Uint8Array, iterations: numbe
   const srcY = Math.round(GRID_H * 0.8);
   const srcX0 = Math.round(GRID_W * 0.4);
   const srcX1 = Math.round(GRID_W * 0.6);
-  const h = 0.004; // convective loss to ambient
+  const h = 0.0018; // convective loss to ambient
   const omega = 1.85;
   for (let it = 0; it < iterations; it++) {
     for (let y = 1; y < GRID_H - 1; y++) {
