@@ -154,7 +154,7 @@ export function SiteHeader() {
             <MagneticButton>
               <Link
                 href="/contact"
-                className="group inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-white transition-colors hover:bg-red"
+                className="group inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-full bg-ink px-5 text-sm font-medium text-white transition-colors hover:bg-red"
               >
                 Start a Project
                 <ArrowUpRight aria-hidden className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -174,7 +174,7 @@ function NavLink({ href, active, children }: { href: string; active: boolean; ch
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "relative inline-flex min-h-11 items-center px-3.5 text-[0.9rem] transition-colors",
+        "relative inline-flex min-h-11 items-center whitespace-nowrap px-2.5 text-[0.9rem] transition-colors xl:px-3.5",
         active ? "text-ink" : "text-gray hover:text-ink",
       )}
     >
@@ -182,7 +182,7 @@ function NavLink({ href, active, children }: { href: string; active: boolean; ch
       <span
         aria-hidden
         className={cn(
-          "absolute inset-x-3.5 bottom-2 h-px origin-left bg-red transition-transform duration-500 ease-[var(--ease-precise)]",
+          "absolute inset-x-2.5 bottom-2 h-px origin-left xl:inset-x-3.5 bg-red transition-transform duration-500 ease-[var(--ease-precise)]",
           active ? "scale-x-100" : "scale-x-0",
         )}
       />

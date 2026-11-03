@@ -89,6 +89,12 @@ All text lives in `src/content/` — no copy is hard-coded in layout components.
   Concept / Illustrative technical showcase). Only add `outcomes` once verified. Add approved photos
   to `public/images/projects/` and list them in `images`.
 - **Homepage sections** — `src/content/home.ts` (services, process steps, simulation tabs).
+- **Products & rentals** — `src/content/products.ts`. Pictures are illustrations
+  (`src/components/illustrations/ProductIllustrations.tsx`); set `photo` to show an approved photo instead.
+- **Supporters (Genopole, AgroParisTech)** — `site.supporters` in `src/content/site.ts`. Add the official
+  logo files supplied by each organisation to `public/images/supporters/` and set `logo`; until then their
+  names are shown as text.
+- **Form options** — `src/lib/contact-schema.ts` **and** the matching lists in `public/api/contact.php`.
 
 ### Accuracy rules followed in this codebase
 
@@ -100,10 +106,16 @@ All text lives in `src/content/` — no copy is hard-coded in layout components.
 
 ## Contact form
 
+The form starts with **"What are you looking for?"** — rent a product (with product, dates and venue),
+engineering design help (including machine design), custom robotics, automation, simulation,
+prototyping, R&D or other — plus budget and timeline. Links across the site preselect options, e.g.
+`/contact/?type=rent&product=chocolate-printer` (see `projectLink()` in `src/lib/contact-schema.ts`).
+
 Flow: browser validation (Zod via React Hook Form) → `POST /api/contact.php` (multipart) → PHP
-re-validates with the same rules as `src/lib/contact-schema.ts` → email to Synthea through Hostinger
-SMTP. The success screen appears **only** after the server confirms the message was accepted by the
-mail server.
+re-validates with the same rules → **notification email to Synthea** (subject names the request, e.g.
+"Rental — 3D chocolate printer", Reply-To = visitor) → **automatic confirmation email to the visitor**
+(fixed text, replies go to Synthea). The "Thank you" screen appears **only** after the server confirms
+the notification was accepted by the mail server.
 
 Protections:
 

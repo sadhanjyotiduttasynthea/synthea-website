@@ -6,13 +6,14 @@ import { Reveal } from "@/components/ui/Reveal";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { CTASection } from "@/components/home/CTASection";
 import { DesignSimulateBuild } from "@/components/home/DesignSimulateBuild";
+import { Supporters } from "@/components/home/Supporters";
 import { site } from "@/content/site";
 import { jsonLd, pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "About Synthea — Science-Led, Engineering-Driven",
   description:
-    "Synthea Advanced Technologies translates advanced engineering and scientific knowledge into practical technology. Founded in France by Dr. Sadhan Jyoti Dutta.",
+    "Synthea Advanced Technologies translates advanced engineering and scientific knowledge into practical technology. Based at La Pépinière Genopole, France. CEO: Sadhan Jyoti Dutta, PhD.",
   path: "/about",
 });
 
@@ -36,9 +37,11 @@ const principles = [
 ];
 
 const expertiseAreas = [
+  "Process engineering",
   "Thermal processes",
   "Computational simulation",
   "Experimental engineering",
+  "Robotics & machine design",
   "Technology development",
 ];
 
@@ -49,7 +52,7 @@ export default function AboutPage() {
     name: site.founder.name,
     jobTitle: site.founder.role,
     worksFor: { "@id": `${site.url}/#organization` },
-    alumniOf: { "@type": "CollegeOrUniversity", name: "Oniris" },
+    honorificSuffix: "PhD",
     knowsAbout: expertiseAreas,
   };
 
@@ -100,8 +103,9 @@ export default function AboutPage() {
               development to solve practical technological challenges.
             </p>
             <p>
-              We work in two complementary ways. We develop our own technologies — such as the Designer Robot — and we
-              provide engineering services to companies, entrepreneurs, research institutions and industrial partners.
+              We work in three complementary ways. We develop our own technologies and machines — such as the Chocolate 3D
+              Food Printer and the Designer Robot — we rent our machines for events and venues, and we provide engineering
+              and machine design services to companies, entrepreneurs, research institutions and industrial partners.
             </p>
             <p>
               Food robotics is one application of our work, not its boundary. The same methods apply to industrial
@@ -118,12 +122,12 @@ export default function AboutPage() {
       <section aria-labelledby="founder-title" className="section-y border-t border-line bg-surface">
         <div className="container-site grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionLabel index="03">Founder</SectionLabel>
+            <SectionLabel index="03">Leadership</SectionLabel>
             <Reveal>
               <div className="relative mt-8 aspect-[4/5] max-w-sm overflow-hidden rounded-3xl border border-line bg-white">
                 <div aria-hidden className="tech-grid absolute inset-0 opacity-70" />
                 <div className="absolute inset-0 flex flex-col justify-between p-8">
-                  <span className="font-mono text-xs uppercase tracking-[0.14em] text-gray">Founder &amp; CEO</span>
+                  <span className="font-mono text-xs uppercase tracking-[0.14em] text-gray">CEO</span>
                   <span aria-hidden className="text-[7rem] font-semibold leading-none tracking-[-0.06em] text-ink">
                     SJD<span className="text-red">.</span>
                   </span>
@@ -136,12 +140,13 @@ export default function AboutPage() {
             <p className="mt-3 font-mono text-sm uppercase tracking-[0.14em] text-red">{site.founder.role}</p>
             <Reveal className="mt-8 space-y-5 text-lg leading-relaxed text-gray">
               <p>
-                Dr. Sadhan Jyoti Dutta holds a PhD in Process Engineering from Oniris in France. The doctoral and research
-                work spans thermal processes, computational simulation, experimental engineering and technology development.
+                Sadhan Jyoti Dutta holds a PhD in Process Engineering, with research experience in thermal processes,
+                computational simulation, experimental engineering and technology development.
               </p>
               <p>
-                That background — connecting physical experiments with computational models — shapes how Synthea works:
-                understand the physics, model it, then design and build with confidence.
+                As CEO, he leads Synthea&apos;s engineering — robotic systems, food-tech machines, machine design and
+                simulation. Connecting physical experiments with computational models shapes how Synthea works: understand
+                the physics, model it, then design and build with confidence.
               </p>
             </Reveal>
             <ul className="mt-10 flex flex-wrap gap-2">
@@ -152,7 +157,7 @@ export default function AboutPage() {
               ))}
             </ul>
             <ButtonLink href={`mailto:${site.email}`} variant="secondary" className="mt-10" icon="up-right">
-              Contact the founder
+              Contact Sadhan Jyoti Dutta
             </ButtonLink>
           </div>
         </div>
@@ -174,6 +179,32 @@ export default function AboutPage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <Supporters tone="surface" />
+
+      <section aria-labelledby="location-title" className="section-y bg-white">
+        <div className="container-site grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <SectionLabel index="05">Where we are</SectionLabel>
+            <h2 id="location-title" className="mt-6 text-h2 font-semibold">
+              Based at Genopole.
+            </h2>
+          </div>
+          <address className="not-italic text-lg leading-relaxed lg:col-span-7">
+            <span className="font-medium">{site.name}</span>
+            <br />
+            {site.address.building}
+            <br />
+            {site.address.street}
+            <br />
+            {site.address.postalCode} {site.address.city}, {site.address.country}
+            <br />
+            <a href={`mailto:${site.email}`} className="mt-4 inline-block break-all text-red underline-offset-4 hover:underline">
+              {site.email}
+            </a>
+          </address>
         </div>
       </section>
 

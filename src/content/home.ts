@@ -1,46 +1,67 @@
-import type { ProjectCategory } from "@/lib/contact-schema";
+import type { InquiryType } from "@/lib/contact-schema";
 
 export const engineeringServices: {
   index: string;
   title: string;
   text: string;
-  category: ProjectCategory;
+  type: InquiryType;
+  cta: string;
 }[] = [
   {
     index: "01",
-    title: "Custom Robotics Development",
-    text: "Application-specific robots, mechanisms and motion systems engineered from concept to prototype.",
-    category: "robotics",
+    title: "Machine Design",
+    text: "Engineering design of special-purpose machines and equipment — food-tech, automation cells, test rigs — from concept to manufacturing drawings.",
+    type: "engineering-design",
+    cta: "Design a machine",
   },
   {
     index: "02",
-    title: "Mechanical & Product Design",
-    text: "3D CAD, assemblies, technical drawings and design for manufacturing for products and equipment.",
-    category: "mechanical-design",
+    title: "Custom Robotics Development",
+    text: "Application-specific robots, mechanisms and motion systems engineered from concept to prototype.",
+    type: "robotics",
+    cta: "Request a Consultation",
   },
   {
     index: "03",
-    title: "Simulation & Engineering Analysis",
-    text: "Thermal, fluid, structural and multiphysics simulation to understand and improve designs.",
-    category: "simulation",
+    title: "Mechanical & Product Design",
+    text: "3D CAD, assemblies, technical drawings and design for manufacturing for products and equipment.",
+    type: "engineering-design",
+    cta: "Request a Consultation",
   },
   {
     index: "04",
-    title: "Industrial Automation",
-    text: "Automation architectures, intelligent equipment and digital workflows for real processes.",
-    category: "automation",
+    title: "Simulation & Engineering Analysis",
+    text: "Thermal, fluid, structural and multiphysics simulation to understand and improve designs.",
+    type: "simulation",
+    cta: "Request a Consultation",
   },
   {
     index: "05",
-    title: "Prototyping & Validation",
-    text: "Functional prototypes, experimental testing and evaluation against defined requirements.",
-    category: "prototype",
+    title: "Industrial Automation",
+    text: "Automation architectures, intelligent equipment and digital workflows for real processes.",
+    type: "automation",
+    cta: "Request a Consultation",
   },
   {
     index: "06",
+    title: "Prototyping & Validation",
+    text: "Functional prototypes, experimental testing and evaluation against defined requirements.",
+    type: "prototype",
+    cta: "Request a Consultation",
+  },
+  {
+    index: "07",
     title: "Research & Development",
     text: "Applied research, feasibility studies, concept validation and research collaborations.",
-    category: "research",
+    type: "research",
+    cta: "Request a Consultation",
+  },
+  {
+    index: "08",
+    title: "Product Rental",
+    text: "Rent our chocolate 3D printer, ice-cream robot, cookie automation machine or delivery robots for your event or venue.",
+    type: "rent",
+    cta: "Rent a product",
   },
 ];
 

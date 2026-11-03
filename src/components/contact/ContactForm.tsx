@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useId, useRef, useState } from "react";
-import { useForm, type FieldError, type UseFormRegisterReturn } from "react-hook-form";
+import { Suspense, useEffect, useId, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useForm, useWatch, type FieldError, type UseFormRegisterReturn, type UseFormSetValue } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "motion/react";
 import { AlertCircle, ArrowUpRight, CheckCircle2, Loader2, Paperclip, X } from "lucide-react";
@@ -10,8 +11,11 @@ import {
   attachmentRules,
   budgetOptions,
   contactSchema,
-  isProjectCategory,
-  projectCategories,
+  designFocusOptions,
+  inquiryTypes,
+  isInquiryType,
+  isRentalProduct,
+  rentalProducts,
   timelineOptions,
   type ContactData,
   type ContactInput,
@@ -20,6 +24,18 @@ import {
 import { cn } from "@/lib/cn";
 
 type Props = { contactEmail: string };
+
+/** Preselect "what are you looking for" (and product) from ?type=…&product=… links. */
+function PreselectFromUrl({ setValue }: { setValue: UseFormSetValue<ContactInput> }) {
+  const params = useSearchParams();
+  const type = params.get("type") ?? params.get("category");
+  const product = params.get("product");
+  useEffect(() => {
+    if (isInquiryType(type)) setValue("inquiryType", type, { shouldValidate: false });
+    if (isRentalProduct(product)) setValue("product", product);
+  }, [type, product, setValue]);
+  return null;
+}
 
 export function ContactForm({ contactEmail }: Props) {
   const [attachmentsEnabled, setAttachmentsEnabled] = useState(false);
@@ -36,11 +52,16 @@ export function ContactForm({ contactEmail }: Props) {
     setValue,
     setError,
     reset,
+    control,
     formState: { errors },
   } = useForm<ContactInput, unknown, ContactData>({
     resolver: zodResolver(contactSchema),
     mode: "onTouched",
     defaultValues: {
+      product: "",
+      designFocus: "",
+      rentalDates: "",
+      location: "",
       fullName: "",
       email: "",
       company: "",
@@ -52,12 +73,11 @@ export function ContactForm({ contactEmail }: Props) {
     },
   });
 
-  // Record when the form became interactive (used for spam timing) and
-  // preselect a category from ?category=… links on service cards.
-  useEffect(() => {
-    const category = new URLSearchParams(window.location.search).get("category");
-    if (isProjectCategory(category)) setValue("category", category);
+  const inquiryType = useWatch({ control, name: "inquiryType" });
+  const isRent = inquiryType === "rent";
+  const isDesign = inquiryType === "engineering-design";
 
+  useEffect(() => {
     // Attachment support is a server-side setting; ask the API at runtime.
     const controller = new AbortController();
     fetch("/api/contact.php", { signal: controller.signal, cache: "no-store" })
@@ -65,7 +85,7 @@ export function ContactForm({ contactEmail }: Props) {
       .then((cfg: { attachmentsEnabled?: boolean } | null) => setAttachmentsEnabled(Boolean(cfg?.attachmentsEnabled)))
       .catch(() => {});
     return () => controller.abort();
-  }, [setValue]);
+  }, []);
 
   // Stamp the time the form became visible (spam timing check). Stored as a
   // data attribute, which React does not manage, so re-renders cannot reset it.
@@ -103,8 +123,16 @@ export function ContactForm({ contactEmail }: Props) {
     setStatus("submitting");
     setServerMessage("");
 
+    const payload: Record<string, unknown> = { ...data };
+    if (data.inquiryType !== "rent") {
+      delete payload.product;
+      delete payload.rentalDates;
+      delete payload.location;
+    }
+    if (data.inquiryType !== "engineering-design") delete payload.designFocus;
+
     const body = new FormData();
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries(payload)) {
       if (value !== undefined) body.append(key, String(value));
     }
     body.append("startedAt", document.getElementById("inquiry")?.dataset.startedAt ?? "0");
@@ -145,7 +173,7 @@ export function ContactForm({ contactEmail }: Props) {
       >
         <CheckCircle2 aria-hidden className="size-10 text-red" />
         <h2 ref={successRef} tabIndex={-1} className="mt-6 text-h2 font-semibold outline-none">
-          Inquiry received.
+          Thank you!
         </h2>
         <p className="mt-4 max-w-lg text-lead text-gray" role="status">
           {serverMessage}
@@ -156,7 +184,7 @@ export function ContactForm({ contactEmail }: Props) {
             onClick={() => setStatus("idle")}
             className="inline-flex min-h-12 items-center rounded-full border border-ink/15 px-6 text-sm font-medium hover:border-ink"
           >
-            Send another inquiry
+            Send another request
           </button>
           <Link href="/" className="inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-medium text-white hover:bg-red">
             Back to home <ArrowUpRight aria-hidden className="size-4" />
@@ -197,7 +225,96 @@ export function ContactForm({ contactEmail }: Props) {
         Fields marked <span className="text-red">*</span> are required.
       </p>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <Suspense fallback={null}>
+        <PreselectFromUrl setValue={setValue} />
+      </Suspense>
+
+      {/* 1 — What are you looking for? */}
+      <fieldset aria-describedby={errors.inquiryType ? "inquiryType-error" : undefined}>
+        <legend className="text-lg font-medium tracking-tight">
+          What are you looking for? <span className="text-red">*</span>
+        </legend>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {inquiryTypes.map((o) => (
+            <label key={o.value} className="relative block cursor-pointer">
+              <input
+                type="radio"
+                value={o.value}
+                {...register("inquiryType")}
+                className="peer absolute inset-0 size-full cursor-pointer opacity-0"
+              />
+              <span className="flex h-full items-start gap-3 rounded-2xl border border-line bg-white p-4 transition-colors peer-checked:border-red peer-checked:bg-red/[0.04] peer-hover:border-ink/30 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red peer-checked:[&>i]:border-red peer-checked:[&>i]:bg-red peer-checked:[&>i]:shadow-[inset_0_0_0_2px_white]">
+                <i aria-hidden className="mt-1 size-3.5 shrink-0 rounded-full border-2 border-line bg-white not-italic transition-colors" />
+                <span>
+                  <span className="block font-medium">{o.label}</span>
+                  <span className="mt-0.5 block text-sm text-gray">{o.hint}</span>
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
+        {errors.inquiryType && (
+          <p id="inquiryType-error" className="mt-3 flex items-center gap-1.5 text-sm text-red">
+            <AlertCircle aria-hidden className="size-4" /> {errors.inquiryType.message}
+          </p>
+        )}
+      </fieldset>
+
+      {/* 2 — Details depending on the choice */}
+      <AnimatePresence initial={false}>
+        {(isRent || isDesign) && (
+          <motion.div
+            key={inquiryType}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-6 grid gap-6 rounded-2xl bg-surface p-5 sm:grid-cols-2 sm:p-6">
+              {isRent && (
+                <>
+                  <SelectField
+                    className="sm:col-span-2"
+                    label="Which product would you like to rent?"
+                    required
+                    placeholder="Select a product"
+                    options={rentalProducts}
+                    error={errors.product}
+                    registration={register("product")}
+                  />
+                  <TextField
+                    label="Dates or rental period"
+                    error={errors.rentalDates}
+                    registration={register("rentalDates")}
+                    placeholder="e.g. 14–16 June, or 3 months"
+                  />
+                  <TextField
+                    label="Location / venue"
+                    error={errors.location}
+                    registration={register("location")}
+                    placeholder="City, venue, restaurant or ship"
+                  />
+                </>
+              )}
+              {isDesign && (
+                <SelectField
+                  className="sm:col-span-2"
+                  label="What do you need designed?"
+                  placeholder="Select an option"
+                  options={designFocusOptions}
+                  error={errors.designFocus}
+                  registration={register("designFocus")}
+                />
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 3 — About you and the project */}
+      <h2 className="mt-10 text-lg font-medium tracking-tight">Your details</h2>
+      <div className="mt-4 grid gap-6 sm:grid-cols-2">
         <TextField label="Full Name" required autoComplete="name" error={errors.fullName} registration={register("fullName")} />
         <TextField
           label="Email Address"
@@ -212,23 +329,14 @@ export function ContactForm({ contactEmail }: Props) {
         <TextField label="Phone Number" type="tel" autoComplete="tel" error={errors.phone} registration={register("phone")} />
 
         <SelectField
-          className="sm:col-span-2"
-          label="Project Category"
-          required
-          placeholder="Select a category"
-          options={projectCategories}
-          error={errors.category}
-          registration={register("category")}
-        />
-        <SelectField
-          label="Estimated Budget"
-          placeholder="Optional"
+          label="Your budget"
+          placeholder="Select a range (optional)"
           options={budgetOptions}
           error={errors.budget}
           registration={register("budget")}
         />
         <SelectField
-          label="Project Timeline"
+          label="Timeline"
           placeholder="Optional"
           options={timelineOptions}
           error={errors.timeline}
@@ -237,9 +345,13 @@ export function ContactForm({ contactEmail }: Props) {
 
         <TextAreaField
           className="sm:col-span-2"
-          label="Project Description"
+          label={isRent ? "Tell us about your event or use" : "Project Description"}
           required
-          hint="What are you trying to achieve? Include constraints, quantities or existing designs if relevant."
+          hint={
+            isRent
+              ? "Type of event or venue, expected number of guests, and anything else we should know."
+              : "What are you trying to achieve? Include constraints, quantities or existing designs if relevant."
+          }
           error={errors.message}
           registration={register("message")}
         />
@@ -292,7 +404,8 @@ export function ContactForm({ contactEmail }: Props) {
 
       <div className="mt-10 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-sm text-xs leading-relaxed text-gray">
-          Your inquiry is sent by email to Synthea and is not stored on this website.
+          You will receive an automatic confirmation by email. Your request is sent to Synthea and is not stored on this
+          website.
         </p>
         <button
           type="submit"
@@ -305,7 +418,7 @@ export function ContactForm({ contactEmail }: Props) {
             </>
           ) : (
             <>
-              Send Inquiry
+              Send Request
               <ArrowUpRight aria-hidden className="size-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </>
           )}
@@ -373,14 +486,21 @@ function TextField({
   type = "text",
   autoComplete,
   inputMode,
+  placeholder,
   ...props
-}: FieldProps & { type?: string; autoComplete?: string; inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"] }) {
+}: FieldProps & {
+  type?: string;
+  autoComplete?: string;
+  placeholder?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+}) {
   const id = useId();
   return (
     <FieldShell id={id} {...props}>
       <input
         id={id}
         type={type}
+        placeholder={placeholder}
         autoComplete={autoComplete}
         inputMode={inputMode}
         aria-required={props.required || undefined}

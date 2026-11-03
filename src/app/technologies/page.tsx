@@ -10,6 +10,7 @@ import { designerRobotFeatures } from "@/components/home/TechnologySpotlight";
 import { SimulationSection } from "@/components/home/SimulationSection";
 import { CTASection } from "@/components/home/CTASection";
 import { pageMetadata } from "@/lib/seo";
+import { projectLink } from "@/lib/contact-schema";
 
 export const metadata: Metadata = pageMetadata({
   title: "Technologies — Designer Robot & Engineering Platforms",
@@ -76,7 +77,7 @@ export default function TechnologiesPage() {
               </dl>
               <div className="mt-10 flex flex-wrap gap-3">
                 <ButtonLink href="/projects/designer-robot">Project details</ButtonLink>
-                <ButtonLink href="/contact?category=research#inquiry" variant="secondary" icon="up-right">
+                <ButtonLink href={projectLink("research")} variant="secondary" icon="up-right">
                   Discuss collaboration
                 </ButtonLink>
               </div>

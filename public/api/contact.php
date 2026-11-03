@@ -196,13 +196,31 @@ if ($honeypot !== '' || $startedAt <= 0 || $nowMs - $startedAt < MIN_FILL_TIME_M
 /* Validation (mirrors src/lib/contact-schema.ts)                             */
 /* ------------------------------------------------------------------------- */
 
-$categories = [
-    'robotics' => 'Robotics Engineering',
-    'mechanical-design' => 'Mechanical Design',
-    'simulation' => 'Simulation & Modeling',
-    'automation' => 'Industrial Automation',
-    'prototype' => 'Prototype Development',
-    'research' => 'Research Collaboration',
+$inquiryTypes = [
+    'rent' => 'Rent one of our products',
+    'engineering-design' => 'Engineering design help',
+    'robotics' => 'Custom robotics development',
+    'automation' => 'Industrial automation',
+    'simulation' => 'Simulation & analysis',
+    'prototype' => 'Prototyping & validation',
+    'research' => 'R&D collaboration',
+    'other' => 'Something else',
+];
+$products = [
+    'chocolate-printer' => '3D chocolate printer',
+    'icecream-robot' => 'Robotic ice-cream delivery machine',
+    'cookie-automation' => 'Cookie automation machine',
+    'delivery-robot-restaurant' => 'Delivery robot — restaurants',
+    'delivery-robot-cruise' => 'Delivery robot — cruise ships',
+    'delivery-robot-events' => 'Delivery robot — hotels & events',
+    'not-sure' => 'Not sure yet — advise me',
+];
+$designFocus = [
+    'machine-design' => 'Machine design',
+    'product-design' => 'Mechanical product design',
+    'cad-drawings' => '3D CAD models & technical drawings',
+    'redesign' => 'Improve or redesign an existing machine',
+    'feasibility' => 'Concept & feasibility study',
     'other' => 'Other',
 ];
 $budgets = [
@@ -210,7 +228,7 @@ $budgets = [
     '1k-5k' => '€1,000–€5,000',
     '5k-20k' => '€5,000–€20,000',
     'over-20k' => 'Above €20,000',
-    'not-defined' => 'Not defined',
+    'not-defined' => 'Not defined yet',
 ];
 $timelines = [
     'asap' => 'As soon as possible',
@@ -232,11 +250,15 @@ function len(string $s): int
 }
 
 $data = [
+    'inquiryType' => field('inquiryType'),
+    'product' => field('product'),
+    'designFocus' => field('designFocus'),
+    'rentalDates' => field('rentalDates'),
+    'location' => field('location'),
     'fullName' => field('fullName'),
     'email' => field('email'),
     'company' => field('company'),
     'phone' => field('phone'),
-    'category' => field('category'),
     'budget' => field('budget'),
     'timeline' => field('timeline'),
     'message' => field('message'),
@@ -244,6 +266,22 @@ $data = [
 ];
 
 $errors = [];
+if (!isset($inquiryTypes[$data['inquiryType']])) {
+    $errors['inquiryType'] = 'Please choose what you are looking for.';
+}
+$isRent = $data['inquiryType'] === 'rent';
+$isDesign = $data['inquiryType'] === 'engineering-design';
+if ($isRent && !isset($products[$data['product']])) {
+    $errors['product'] = 'Please choose which product you would like to rent.';
+}
+if ($isDesign && $data['designFocus'] !== '' && !isset($designFocus[$data['designFocus']])) {
+    $errors['designFocus'] = 'Please choose a valid option.';
+}
+foreach (['rentalDates', 'location'] as $k) {
+    if (len($data[$k]) > 200) {
+        $errors[$k] = 'Please keep this under 200 characters.';
+    }
+}
 if (len($data['fullName']) < 2) {
     $errors['fullName'] = 'Please enter your full name.';
 } elseif (len($data['fullName']) > 120) {
@@ -260,17 +298,14 @@ if (len($data['phone']) > 40) {
 } elseif ($data['phone'] !== '' && !preg_match('/^[+()\d\s.\-]*$/', $data['phone'])) {
     $errors['phone'] = 'Use digits, spaces and + ( ) - . only.';
 }
-if (!isset($categories[$data['category']])) {
-    $errors['category'] = 'Please select a project category.';
-}
 if ($data['budget'] !== '' && !isset($budgets[$data['budget']])) {
     $errors['budget'] = 'Please choose a valid option.';
 }
 if ($data['timeline'] !== '' && !isset($timelines[$data['timeline']])) {
     $errors['timeline'] = 'Please choose a valid option.';
 }
-if (len($data['message']) < 30) {
-    $errors['message'] = 'Please describe your project in at least 30 characters.';
+if (len($data['message']) < 20) {
+    $errors['message'] = 'Please tell us a little more (at least 20 characters).';
 } elseif (len($data['message']) > 5000) {
     $errors['message'] = 'Please keep the description under 5,000 characters.';
 }
@@ -338,12 +373,21 @@ if (!is_configured($config)) {
 /* Compose                                                                    */
 /* ------------------------------------------------------------------------- */
 
+$requestLabel = $inquiryTypes[$data['inquiryType']];
+if ($isRent) {
+    $requestLabel = 'Rental — ' . $products[$data['product']];
+} elseif ($isDesign && $data['designFocus'] !== '') {
+    $requestLabel = 'Engineering design — ' . $designFocus[$data['designFocus']];
+}
+
 $rows = [
+    'Request' => $requestLabel,
     'Name' => $data['fullName'],
     'Email' => $data['email'],
     'Company' => $data['company'] !== '' ? $data['company'] : '—',
     'Phone' => $data['phone'] !== '' ? $data['phone'] : '—',
-    'Category' => $categories[$data['category']],
+    'Rental dates' => $isRent && $data['rentalDates'] !== '' ? $data['rentalDates'] : '—',
+    'Location / venue' => $isRent && $data['location'] !== '' ? $data['location'] : '—',
     'Budget' => $data['budget'] !== '' ? $budgets[$data['budget']] : '—',
     'Timeline' => $data['timeline'] !== '' ? $timelines[$data['timeline']] : '—',
     'Attachment' => $attachment ? $attachment['name'] : '—',
@@ -361,7 +405,7 @@ $e = function (string $s): string {
     return htmlspecialchars($s, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 };
 $html = '<!doctype html><html><body style="font-family:Arial,sans-serif;color:#111">'
-    . '<h2 style="margin:0 0 16px">New project inquiry — SYNTHEA</h2>'
+    . '<h2 style="margin:0 0 16px">New website request — SYNTHEA</h2>'
     . '<table cellpadding="6" style="border-collapse:collapse;font-size:14px">';
 foreach ($rows as $k => $v) {
     $html .= '<tr><td style="color:#6B7280;border-bottom:1px solid #E5E7EB">' . $e($k)
@@ -371,7 +415,7 @@ $html .= '</table><h3 style="margin:24px 0 8px">Project description</h3>'
     . '<p style="white-space:pre-wrap;font-size:14px;line-height:1.6">' . $e($data['message']) . '</p></body></html>';
 
 $subjectName = substr(preg_replace('/[\r\n]+/', ' ', $data['fullName']), 0, 80);
-$subject = '[Website] ' . $categories[$data['category']] . ' — ' . $subjectName;
+$subject = '[Website] ' . $requestLabel . ' — ' . $subjectName;
 
 /* ------------------------------------------------------------------------- */
 /* MIME + delivery                                                            */
@@ -507,4 +551,54 @@ try {
     ]);
 }
 
-respond(200, ['ok' => true, 'message' => 'Thank you. Your inquiry has been sent — we will get back to you shortly.']);
+/* ------------------------------------------------------------------------- */
+/* Automatic confirmation to the sender                                       */
+/* ------------------------------------------------------------------------- */
+// Fixed text only (no echo of the visitor's message), so the form cannot be
+// abused to send arbitrary content to third parties.
+
+$firstName = trim((string) strtok($data['fullName'], ' '));
+$firstName = substr($firstName !== '' ? $firstName : $data['fullName'], 0, 60);
+$confirmSubject = 'We received your request — Synthea Advanced Technologies';
+$confirmText = "Dear $firstName,\n\n"
+    . "Thank you for contacting Synthea Advanced Technologies.\n\n"
+    . "We have received your request (" . $requestLabel . ") and will get back to you shortly.\n"
+    . "If you need to add anything, simply reply to this email.\n\n"
+    . "Kind regards,\n"
+    . "Sadhan Jyoti Dutta, PhD\n"
+    . "CEO, Synthea Advanced Technologies\n"
+    . "La Pépinière Genopole, 4 Rue Pierre Fontaine, 91058 Évry-Courcouronnes, France\n"
+    . "https://syntheatech.com\n\n"
+    . "This is an automatic confirmation. If you did not submit this request, please ignore this email.\n";
+$confirmHtml = '<!doctype html><html><body style="font-family:Arial,sans-serif;color:#111;line-height:1.6;font-size:15px">'
+    . '<p>Dear ' . $e($firstName) . ',</p>'
+    . '<p>Thank you for contacting <strong>Synthea Advanced Technologies</strong>.</p>'
+    . '<p>We have received your request (<strong>' . $e($requestLabel) . '</strong>) and will get back to you shortly. '
+    . 'If you need to add anything, simply reply to this email.</p>'
+    . '<p>Kind regards,<br>Sadhan Jyoti Dutta, PhD<br>CEO, Synthea Advanced Technologies<br>'
+    . '<span style="color:#646B78">La Pépinière Genopole, 4 Rue Pierre Fontaine, 91058 Évry-Courcouronnes, France</span><br>'
+    . '<a href="https://syntheatech.com" style="color:#D71932">syntheatech.com</a></p>'
+    . '<p style="color:#646B78;font-size:12px">This is an automatic confirmation. If you did not submit this request, please ignore this email.</p>'
+    . '</body></html>';
+
+$confirmed = false;
+try {
+    $replyToOwner = $to[0] ?? $config['from_email'];
+    [$cHeaders, $cBody] = build_mime($config, [$data['email']], $replyToOwner, $confirmSubject, $confirmText, $confirmHtml, null);
+    if ($config['transport'] === 'mail') {
+        $confirmed = mail($data['email'], encode_header($confirmSubject), $cBody, implode("\r\n", $cHeaders), '-f' . $config['from_email']);
+    } else {
+        smtp_send($config, [$data['email']], $cHeaders, $confirmSubject, $cBody);
+        $confirmed = true;
+    }
+} catch (Throwable $ex) {
+    // The request itself was delivered; only the courtesy confirmation failed.
+    error_log('[contact] Confirmation email failed: ' . $ex->getMessage());
+}
+
+respond(200, [
+    'ok' => true,
+    'message' => $confirmed
+        ? 'Your request has been sent. A confirmation email is on its way to ' . $data['email'] . ' — we will get back to you shortly.'
+        : 'Your request has been sent — we will get back to you shortly.',
+]);
