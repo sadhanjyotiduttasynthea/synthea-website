@@ -15,6 +15,7 @@ import {
   inquiryTypes,
   isInquiryType,
   isRentalProduct,
+  rentalPeriodOptions,
   rentalProducts,
   timelineOptions,
   type ContactData,
@@ -59,6 +60,7 @@ export function ContactForm({ contactEmail }: Props) {
     mode: "onTouched",
     defaultValues: {
       product: "",
+      rentalPeriod: "",
       designFocus: "",
       rentalDates: "",
       location: "",
@@ -126,6 +128,7 @@ export function ContactForm({ contactEmail }: Props) {
     const payload: Record<string, unknown> = { ...data };
     if (data.inquiryType !== "rent") {
       delete payload.product;
+      delete payload.rentalPeriod;
       delete payload.rentalDates;
       delete payload.location;
     }
@@ -283,13 +286,23 @@ export function ContactForm({ contactEmail }: Props) {
                     error={errors.product}
                     registration={register("product")}
                   />
-                  <TextField
-                    label="Dates or rental period"
-                    error={errors.rentalDates}
-                    registration={register("rentalDates")}
-                    placeholder="e.g. 14–16 June, or 3 months"
+                  <SelectField
+                    label="Rental period"
+                    required
+                    placeholder="Select a period"
+                    options={rentalPeriodOptions}
+                    error={errors.rentalPeriod}
+                    registration={register("rentalPeriod")}
+                    hint="Minimum rental period: 6 months."
                   />
                   <TextField
+                    label="Preferred start date"
+                    error={errors.rentalDates}
+                    registration={register("rentalDates")}
+                    placeholder="e.g. September 2027"
+                  />
+                  <TextField
+                    className="sm:col-span-2"
                     label="Location / venue"
                     error={errors.location}
                     registration={register("location")}
@@ -345,11 +358,11 @@ export function ContactForm({ contactEmail }: Props) {
 
         <TextAreaField
           className="sm:col-span-2"
-          label={isRent ? "Tell us about your event or use" : "Project Description"}
+          label={isRent ? "Tell us how you will use it" : "Project Description"}
           required
           hint={
             isRent
-              ? "Type of event or venue, expected number of guests, and anything else we should know."
+              ? "Type of venue or business, how you plan to use the machine, and anything else we should know."
               : "What are you trying to achieve? Include constraints, quantities or existing designs if relevant."
           }
           error={errors.message}

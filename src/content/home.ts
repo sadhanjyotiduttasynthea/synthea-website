@@ -59,7 +59,7 @@ export const engineeringServices: {
   {
     index: "08",
     title: "Product Rental",
-    text: "Rent our chocolate 3D printer, ice-cream robot, cookie automation machine or delivery robots for your event or venue.",
+    text: "Rent our chocolate 3D printer, ice-cream robot, cookie automation machine or delivery robots for your venue — from 6 months.",
     type: "rent",
     cta: "Rent a product",
   },

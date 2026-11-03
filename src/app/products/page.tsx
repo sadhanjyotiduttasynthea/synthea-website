@@ -19,7 +19,7 @@ export const metadata: Metadata = pageMetadata({
 });
 
 const steps = [
-  { title: "Tell us your need", text: "Choose a product, your dates and your venue in the request form." },
+  { title: "Tell us your need", text: "Choose a product, a rental period (minimum 6 months) and your venue in the request form." },
   { title: "We confirm availability", text: "You receive a reply with availability, conditions and a quote." },
   { title: "Delivery & setup", text: "We agree on delivery, installation and support for your event or site." },
 ];
@@ -34,8 +34,8 @@ export default function ProductsPage() {
         crumbs={[{ label: "Products", href: "/products" }]}
         intro={
           <p>
-            Synthea designs food-tech and service robotics. Rent our machines for events, restaurants, hospitality, cruise
-            ships and production — or ask us to design a machine for you.
+            Synthea designs food-tech and service robotics. Rent our machines for restaurants, hospitality, cruise ships,
+            retail and production — from 6 months — or ask us to design a machine for you.
           </p>
         }
       >

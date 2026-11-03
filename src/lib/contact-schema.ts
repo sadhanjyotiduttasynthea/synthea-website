@@ -36,11 +36,18 @@ export const designFocusOptions = [
 ] as const;
 
 export const budgetOptions = [
-  { value: "under-1k", label: "Under €1,000" },
-  { value: "1k-5k", label: "€1,000–€5,000" },
-  { value: "5k-20k", label: "€5,000–€20,000" },
-  { value: "over-20k", label: "Above €20,000" },
+  { value: "5k-10k", label: "€5,000–€10,000" },
+  { value: "10k-25k", label: "€10,000–€25,000" },
+  { value: "25k-50k", label: "€25,000–€50,000" },
+  { value: "over-50k", label: "Above €50,000" },
   { value: "not-defined", label: "Not defined yet" },
+] as const;
+
+/** Rentals have a minimum period of 6 months. */
+export const rentalPeriodOptions = [
+  { value: "6-months", label: "6 months (minimum)" },
+  { value: "12-months", label: "12 months" },
+  { value: "over-12-months", label: "More than 12 months" },
 ] as const;
 
 export const timelineOptions = [
@@ -83,6 +90,7 @@ export const contactSchema = z
     inquiryType: z.enum(values(inquiryTypes), { error: "Please choose what you are looking for." }),
     product: z.enum(values(rentalProducts)).optional().or(z.literal("")),
     designFocus: z.enum(values(designFocusOptions)).optional().or(z.literal("")),
+    rentalPeriod: z.enum(values(rentalPeriodOptions)).optional().or(z.literal("")),
     rentalDates: optionalText(200),
     location: optionalText(200),
     fullName: z
@@ -111,6 +119,9 @@ export const contactSchema = z
   .superRefine((data, ctx) => {
     if (data.inquiryType === "rent" && !data.product) {
       ctx.addIssue({ code: "custom", path: ["product"], message: "Please choose which product you would like to rent." });
+    }
+    if (data.inquiryType === "rent" && !data.rentalPeriod) {
+      ctx.addIssue({ code: "custom", path: ["rentalPeriod"], message: "Please choose a rental period (minimum 6 months)." });
     }
   });
 

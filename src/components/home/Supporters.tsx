@@ -1,5 +1,11 @@
 import Image from "next/image";
 import { site } from "@/content/site";
+import { brandAssets, type BrandAsset } from "@/content/brand-assets.generated";
+
+const logoFor: Record<string, BrandAsset> = {
+  Genopole: brandAssets.genopole,
+  AgroParisTech: brandAssets.agroparistech,
+};
 import { cn } from "@/lib/cn";
 
 /**
@@ -19,23 +25,26 @@ export function Supporters({ tone = "light", className }: { tone?: "light" | "su
           Supported by
         </h2>
         <ul className="flex flex-wrap items-center gap-x-12 gap-y-6">
-          {site.supporters.map((s) => (
+          {site.supporters.map((s) => {
+            const logo = logoFor[s.name];
+            return (
             <li key={s.name}>
               <a
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex min-h-12 items-center opacity-80 grayscale transition hover:opacity-100 hover:grayscale-0"
+                className="group flex min-h-12 items-center transition-opacity hover:opacity-80"
                 aria-label={`${s.name} (opens in a new tab)`}
               >
-                {s.logo ? (
-                  <Image src={s.logo} alt={s.name} width={180} height={56} className="h-12 w-auto object-contain" />
+                {logo ? (
+                  <Image src={logo.src} alt={s.name} width={logo.width} height={logo.height} className="h-14 w-auto object-contain sm:h-16" />
                 ) : (
                   <span className="text-2xl font-semibold tracking-tight text-ink group-hover:text-red">{s.name}</span>
                 )}
               </a>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </div>
     </section>
