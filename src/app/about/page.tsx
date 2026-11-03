@@ -3,17 +3,16 @@ import { PageHero } from "@/components/ui/PageHero";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { AnimatedHeading } from "@/components/ui/AnimatedHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { ButtonLink } from "@/components/ui/ButtonLink";
 import { CTASection } from "@/components/home/CTASection";
 import { DesignSimulateBuild } from "@/components/home/DesignSimulateBuild";
 import { Supporters } from "@/components/home/Supporters";
 import { site } from "@/content/site";
-import { jsonLd, pageMetadata } from "@/lib/seo";
+import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "About Synthea — Science-Led, Engineering-Driven",
   description:
-    "Synthea Advanced Technologies translates advanced engineering and scientific knowledge into practical technology. Based at La Pépinière Genopole, France. CEO: Sadhan Jyoti Dutta, PhD.",
+    "Synthea Advanced Technologies translates advanced engineering and scientific knowledge into practical technology. Based at La Pépinière Genopole, France.",
   path: "/about",
 });
 
@@ -36,27 +35,11 @@ const principles = [
   },
 ];
 
-const expertiseAreas = [
-  "Team leadership",
-  "Building from scratch",
-  "Sustainable innovation",
-  "Partnerships",
-];
 
 export default function AboutPage() {
-  const personLd = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: site.founder.name,
-    jobTitle: site.founder.role,
-    worksFor: { "@id": `${site.url}/#organization` },
-    honorificSuffix: "PhD",
-    knowsAbout: expertiseAreas,
-  };
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(personLd)} />
       <PageHero
         eyebrow="About Synthea"
         title="Science-Led. Engineering-Driven."
@@ -116,59 +99,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Founder */}
-      <section aria-labelledby="founder-title" className="section-y border-t border-line bg-surface">
-        <div className="container-site grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <SectionLabel index="03">Leadership</SectionLabel>
-            <Reveal>
-              <div className="relative mt-8 aspect-[4/5] max-w-sm overflow-hidden rounded-3xl border border-line bg-white">
-                <div aria-hidden className="tech-grid absolute inset-0 opacity-70" />
-                <div className="absolute inset-0 flex flex-col justify-between p-8">
-                  <span className="font-mono text-xs uppercase tracking-[0.14em] text-gray">CEO</span>
-                  <span aria-hidden className="text-[7rem] font-semibold leading-none tracking-[-0.06em] text-ink">
-                    SJD<span className="text-red">.</span>
-                  </span>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-          <div className="lg:col-span-7 lg:pt-16">
-            <AnimatedHeading id="founder-title" text={site.founder.name} className="text-h2 font-semibold" />
-            <p className="mt-3 font-mono text-sm uppercase tracking-[0.14em] text-red">{site.founder.role}</p>
-            <Reveal className="mt-8 space-y-5 text-lg leading-relaxed text-gray">
-              <p>
-                Sadhan Jyoti Dutta, PhD, is the CEO of Synthea Advanced Technologies, with more than three years of
-                leadership experience.
-              </p>
-              <p>
-                He likes to build things from scratch — useful technologies that are sustainable and good for the planet.
-                His aim is simple: bring innovation that makes everyday life a little easier and creates real value for
-                society.
-              </p>
-              <p>
-                He leads Synthea&apos;s vision and team, and works closely with clients, partners and supporters to turn good
-                ideas into products people can use.
-              </p>
-            </Reveal>
-            <ul className="mt-10 flex flex-wrap gap-2">
-              {expertiseAreas.map((e) => (
-                <li key={e} className="rounded-full border border-line bg-white px-4 py-2 text-sm">
-                  {e}
-                </li>
-              ))}
-            </ul>
-            <ButtonLink href={`mailto:${site.email}`} variant="secondary" className="mt-10" icon="up-right">
-              Contact Sadhan Jyoti Dutta
-            </ButtonLink>
-          </div>
-        </div>
-      </section>
-
       {/* Principles */}
       <section aria-labelledby="principles-title" className="section-y bg-white">
         <div className="container-site">
-          <SectionLabel index="04">How we work</SectionLabel>
+          <SectionLabel index="03">How we work</SectionLabel>
           <AnimatedHeading id="principles-title" text="Principles we engineer by." className="mt-6 text-h2 font-semibold" />
           <ul className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
             {principles.map((p, i) => (
@@ -189,7 +123,7 @@ export default function AboutPage() {
       <section aria-labelledby="location-title" className="section-y bg-white">
         <div className="container-site grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <SectionLabel index="05">Where we are</SectionLabel>
+            <SectionLabel index="04">Where we are</SectionLabel>
             <h2 id="location-title" className="mt-6 text-h2 font-semibold">
               Based at Genopole.
             </h2>
