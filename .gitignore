@@ -42,3 +42,8 @@ next-env.d.ts
 
 # allow the documented example env file
 !.env.example
+
+# contact form secrets (never commit)
+public/api/contact-config.php
+synthea-contact-config.php
+synthea-rate-limit/

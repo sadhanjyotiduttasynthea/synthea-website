@@ -46,8 +46,8 @@ export default function PrivacyPage() {
             </ul>
             <h3>Technical data</h3>
             <p>
-              To protect the form against abuse, your IP address is used temporarily in server memory for rate limiting. It
-              is not stored in a database and is discarded automatically. Our hosting provider may keep standard server logs
+              To protect the form against abuse, a one-way hash of your IP address is kept on our web server for up to 15
+              minutes for rate limiting, then deleted automatically. The IP address itself is not stored. Our hosting provider may keep standard server logs
               for security and operational purposes.
             </p>
             <p>
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
             <h2>4. How form submissions are handled</h2>
             <p>
               Form submissions are not stored in a database on this website. They are transmitted by email to Synthea
-              through a transactional email service acting as a data processor. Attachments, when enabled, are processed in
+              through our email service provider acting as a data processor. Attachments, when enabled, are processed in
               memory and forwarded with the email; they are not saved on the web server.
             </p>
 
@@ -74,7 +74,7 @@ export default function PrivacyPage() {
             <ul>
               <li>Our website hosting provider ({site.legal.host.name}).</li>
               <li>
-                Our email delivery provider (for example Resend, or the SMTP service of our email host), used solely to
+                Our email provider (the email service of our host), used solely to
                 deliver your message to us.
               </li>
             </ul>

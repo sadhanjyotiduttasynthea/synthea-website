@@ -4,6 +4,8 @@ import { expertise, getExpertise } from "@/content/expertise";
 import { ServicePage } from "@/components/service/ServicePage";
 import { pageMetadata } from "@/lib/seo";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return expertise.map((e) => ({ slug: e.slug }));
 }

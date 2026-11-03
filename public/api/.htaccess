@@ -1,0 +1,7 @@
+# Never serve the contact configuration (contains SMTP credentials)
+<Files "contact-config.php">
+  Require all denied
+</Files>
+<FilesMatch "\.(json|log|example)$">
+  Require all denied
+</FilesMatch>
