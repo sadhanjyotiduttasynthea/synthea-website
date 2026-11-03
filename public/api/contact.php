@@ -33,9 +33,11 @@ function load_config(): array
 {
     $defaults = [
         'to_email' => 'sadhan-jyoti.dutta@syntheatech.com',
-        'from_email' => '',
+        // Without a config file the form sends with PHP mail() from Synthea's own
+        // mailbox, which works on Hostinger PHP hosting with no password.
+        'from_email' => 'sadhan-jyoti.dutta@syntheatech.com',
         'from_name' => 'Synthea Website',
-        'transport' => 'smtp', // "smtp" or "mail"
+        'transport' => 'mail', // "smtp" (recommended, needs a mailbox password) or "mail"
         'smtp_host' => 'smtp.hostinger.com',
         'smtp_port' => 465,
         'smtp_secure' => 'ssl', // "ssl" (port 465) or "tls" (STARTTLS, port 587)
@@ -50,15 +52,33 @@ function load_config(): array
         dirname(__DIR__, 2) . '/synthea-contact-config.php',
         __DIR__ . '/contact-config.php',
     ];
+    $config = $defaults;
     foreach ($candidates as $file) {
         if (is_file($file)) {
             $cfg = include $file;
             if (is_array($cfg)) {
-                return array_merge($defaults, $cfg);
+                $config = array_merge($defaults, $cfg);
+                break;
             }
         }
     }
-    return $defaults;
+    // SMTP selected but no usable password (e.g. the template placeholder) → use mail().
+    $pass = (string) $config['smtp_pass'];
+    if ($config['transport'] === 'smtp' && ($config['smtp_user'] === '' || $pass === '' || strpos($pass, 'PUT-THE-') === 0)) {
+        $config['transport'] = 'mail';
+    }
+    return $config;
+}
+
+/** Send with PHP mail(); retries without the -f envelope option if the host rejects it. */
+function php_mail(array $config, string $to, string $subject, string $body, array $headers): bool
+{
+    $h = implode("\r\n", $headers);
+    $from = header_safe((string) $config['from_email']);
+    if (@mail($to, $subject, $body, $h, '-f' . $from)) {
+        return true;
+    }
+    return @mail($to, $subject, $body, $h);
 }
 
 function is_configured(array $c): bool
@@ -549,7 +569,7 @@ $to = array_values(array_filter(array_map('trim', explode(',', (string) $config[
 try {
     [$headers, $body] = build_mime($config, $to, $data['email'], $subject, $text, $html, $attachment);
     if ($config['transport'] === 'mail') {
-        $ok = mail(implode(', ', $to), encode_header($subject), $body, implode("\r\n", $headers), '-f' . $config['from_email']);
+        $ok = php_mail($config, implode(', ', $to), encode_header($subject), $body, $headers);
         if (!$ok) {
             throw new RuntimeException('mail() returned false');
         }
@@ -599,7 +619,7 @@ try {
     $replyToOwner = $to[0] ?? $config['from_email'];
     [$cHeaders, $cBody] = build_mime($config, [$data['email']], $replyToOwner, $confirmSubject, $confirmText, $confirmHtml, null);
     if ($config['transport'] === 'mail') {
-        $confirmed = mail($data['email'], encode_header($confirmSubject), $cBody, implode("\r\n", $cHeaders), '-f' . $config['from_email']);
+        $confirmed = php_mail($config, $data['email'], encode_header($confirmSubject), $cBody, $cHeaders);
     } else {
         smtp_send($config, [$data['email']], $cHeaders, $confirmSubject, $cBody);
         $confirmed = true;
