@@ -1,0 +1,6 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+
+Host: https://syntheatech.com
+Sitemap: https://syntheatech.com/sitemap.xml
