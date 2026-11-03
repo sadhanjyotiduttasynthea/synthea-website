@@ -2,7 +2,19 @@
 export type BrandAsset = { src: string; width: number; height: number } | null;
 
 export const brandAssets: { synthea: BrandAsset; genopole: BrandAsset; agroparistech: BrandAsset } = {
-  "synthea": null,
-  "genopole": null,
-  "agroparistech": null
+  "synthea": {
+    "src": "/images/generated/synthea.png",
+    "width": 1805,
+    "height": 405
+  },
+  "genopole": {
+    "src": "/images/generated/genopole.png",
+    "width": 312,
+    "height": 248
+  },
+  "agroparistech": {
+    "src": "/images/generated/agroparistech.png",
+    "width": 1375,
+    "height": 440
+  }
 };
