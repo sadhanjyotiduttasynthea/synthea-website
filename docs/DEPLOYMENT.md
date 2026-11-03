@@ -61,9 +61,13 @@ Download the `hostinger-deploy` branch as a ZIP from GitHub (*Code → Download 
 branch), or use the `synthea-website-static.zip` provided, and in **File Manager → public_html**
 upload and **Extract** it so that `index.html` sits directly inside `public_html` (not in a sub-folder).
 
-## 3. One-time: contact form email
+## 3. Contact form email
 
-The form sends through a Hostinger mailbox using authenticated SMTP.
+**Works out of the box:** without any configuration the form sends with PHP `mail()` from
+`sadhan-jyoti.dutta@syntheatech.com` (supported on Hostinger PHP hosting). Requests go to that address
+and visitors receive an automatic confirmation.
+
+**Recommended for best deliverability:** send through a Hostinger mailbox with authenticated SMTP:
 
 1. **Create a mailbox** in hPanel → **Emails** → `syntheatech.com`, e.g. `noreply@syntheatech.com`
    (or use `sadhan-jyoti.dutta@syntheatech.com` itself). Note its password.
