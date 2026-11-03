@@ -6,13 +6,12 @@ import { Reveal } from "@/components/ui/Reveal";
 import { CTASection } from "@/components/home/CTASection";
 import { DesignSimulateBuild } from "@/components/home/DesignSimulateBuild";
 import { Supporters } from "@/components/home/Supporters";
-import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "About Synthea — Science-Led, Engineering-Driven",
   description:
-    "Synthea Advanced Technologies translates advanced engineering and scientific knowledge into practical technology. Based at La Pépinière Genopole, France.",
+    "Synthea Advanced Technologies translates advanced engineering and scientific knowledge into practical technology.",
   path: "/about",
 });
 
@@ -119,30 +118,6 @@ export default function AboutPage() {
       </section>
 
       <Supporters tone="surface" />
-
-      <section aria-labelledby="location-title" className="section-y bg-white">
-        <div className="container-site grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <SectionLabel index="04">Where we are</SectionLabel>
-            <h2 id="location-title" className="mt-6 text-h2 font-semibold">
-              Based at Genopole.
-            </h2>
-          </div>
-          <address className="not-italic text-lg leading-relaxed lg:col-span-7">
-            <span className="font-medium">{site.name}</span>
-            <br />
-            {site.address.building}
-            <br />
-            {site.address.street}
-            <br />
-            {site.address.postalCode} {site.address.city}, {site.address.country}
-            <br />
-            <a href={`mailto:${site.email}`} className="mt-4 inline-block break-all text-red underline-offset-4 hover:underline">
-              {site.email}
-            </a>
-          </address>
-        </div>
-      </section>
 
       <CTASection />
     </>

@@ -11,7 +11,7 @@ export const site = {
   tagline: "Engineering What Comes Next.",
   positioning: "Robotics • Engineering Design • Simulation • Automation",
   description:
-    "Synthea Advanced Technologies is a deep-tech engineering company at Genopole, France, developing robotic systems, food-tech machines, machine design, computational simulation and intelligent automation.",
+    "Synthea Advanced Technologies is a deep-tech engineering company in France developing robotic systems, food-tech machines, machine design, computational simulation and intelligent automation.",
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://syntheatech.com").replace(/\/$/, ""),
   locale: "en",
   country: "France",
