@@ -1,0 +1,51 @@
+# Synthea website — Apache configuration for Hostinger (static Next.js export)
+
+Options -Indexes
+DirectoryIndex index.html index.php
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Force HTTPS and the canonical host (syntheatech.com without www)
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteCond %{HTTP_HOST} ^(?:www\.)?(syntheatech\.com)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # Block access to hidden files (e.g. .git, .env) except .well-known
+  RewriteRule "(^|/)\.(?!well-known/)" - [F]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), browsing-topics=()"
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+
+  # Next.js gives every JS/CSS/font file a content hash — cache for a year
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpg|jpeg|svg|webp|avif|ico)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  # HTML must always be revalidated so new deployments show immediately
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/plain application/xml
+</IfModule>
+
+# Open Graph image is exported without a file extension
+<Files "opengraph-image">
+  ForceType image/png
+</Files>
+
+AddType image/avif .avif
+AddType image/webp .webp
+AddType text/plain .txt

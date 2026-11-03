@@ -85,7 +85,7 @@ export function SiteFooter() {
   );
 }
 
-async function CopyrightYear() {
-  "use cache";
+/** Year of the last build (static site — rebuilt on every deploy). */
+function CopyrightYear() {
   return <>{new Date().getFullYear()}</>;
 }

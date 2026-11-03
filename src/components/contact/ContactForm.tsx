@@ -60,7 +60,7 @@ export function ContactForm({ contactEmail }: Props) {
 
     // Attachment support is a server-side setting; ask the API at runtime.
     const controller = new AbortController();
-    fetch("/api/contact", { signal: controller.signal, cache: "no-store" })
+    fetch("/api/contact.php", { signal: controller.signal, cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((cfg: { attachmentsEnabled?: boolean } | null) => setAttachmentsEnabled(Boolean(cfg?.attachmentsEnabled)))
       .catch(() => {});
@@ -113,7 +113,7 @@ export function ContactForm({ contactEmail }: Props) {
     if (attachmentsEnabled && file) body.append("attachment", file);
 
     try {
-      const res = await fetch("/api/contact", { method: "POST", body });
+      const res = await fetch("/api/contact.php", { method: "POST", body });
       const json = (await res.json().catch(() => null)) as ContactResponse | null;
       if (res.ok && json?.ok) {
         setStatus("success");

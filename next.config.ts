@@ -1,25 +1,26 @@
 import type { NextConfig } from "next";
 
-const securityHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "X-Frame-Options", value: "DENY" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
-];
-
+/**
+ * Static export: `npm run build` writes a complete static site to `out/`,
+ * which is uploaded to Hostinger's public_html (PHP/HTML hosting).
+ *
+ * Server-side behaviour that Next.js cannot provide in a static export lives
+ * in `public/` instead:
+ *   - contact form backend  → public/api/contact.php
+ *   - security headers, 404 → public/.htaccess
+ */
 const nextConfig: NextConfig = {
-  cacheComponents: true,
-  partialPrefetching: true,
+  output: "export",
+  trailingSlash: true,
   poweredByHeader: false,
   reactStrictMode: true,
   images: {
-    formats: ["image/avif", "image/webp"],
+    // Hostinger shared hosting has no Next.js image optimizer.
+    unoptimized: true,
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "@react-three/drei"],
   },
-  serverExternalPackages: ["nodemailer"],
   turbopack: {
     rules: {
       "*.css": {
@@ -27,9 +28,6 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
-  },
-  async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
   },
 };
 

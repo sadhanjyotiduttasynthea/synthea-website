@@ -4,6 +4,8 @@ import { getProject, projects } from "@/content/projects";
 import { ProjectDetail } from "@/components/projects/ProjectDetail";
 import { pageMetadata } from "@/lib/seo";
 
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
 }

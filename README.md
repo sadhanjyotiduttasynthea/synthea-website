@@ -3,19 +3,21 @@
 Production website for **Synthea Advanced Technologies** — *Engineering What Comes Next.*
 Robotics • Engineering Design • Simulation • Automation.
 
-Live domain: <https://syntheatech.com> (hosted on Hostinger, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)).
+Live domain: <https://syntheatech.com> — hosted on a Hostinger **Premium** plan as a static site with a PHP
+contact-form backend. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Stack
 
 | Area | Technology |
 | --- | --- |
-| Framework | Next.js 16 (App Router, Turbopack, Cache Components), React 19 |
+| Framework | Next.js 16 (App Router, Turbopack) with **static export** (`out/`), React 19 |
 | Language | TypeScript (strict) |
 | Styling | Tailwind CSS v4 with design tokens in `src/app/globals.css` |
 | Motion | Motion for React (`motion/react`), respects `prefers-reduced-motion` |
 | 3D | Three.js, React Three Fiber, Drei (lazy-loaded, client-only) |
 | Forms | React Hook Form + Zod (same schema on client and server) |
-| Email | Resend **or** SMTP (Nodemailer), server-side only |
+| Contact backend | `public/api/contact.php` (PHP 7.4+), authenticated SMTP via Hostinger Email |
+| Hosting | Hostinger PHP/HTML website, deployed from GitHub (Actions → `hostinger-deploy` branch → hPanel Git) |
 | Icons / fonts | Lucide React, Geist (self-hosted via the `geist` package) |
 
 ## Quick start
@@ -34,16 +36,16 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open <http://localhost:3000>. Without email credentials the site works fully, and the contact form
-shows a clear "temporarily unavailable — email us directly" message instead of pretending to send.
+Open <http://localhost:3000>. The contact form needs PHP, which `next dev` does not run — to test the
+form locally, build and preview the static site with PHP (see *Testing the form*).
 
 ## Scripts
 
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Development server with hot reload |
-| `npm run build` | Production build (type-checks and prerenders all pages) |
-| `npm start` | Serve the production build (`PORT` env var supported) |
+| `npm run build` | Static production build into `out/` (type-checks and prerenders every page) |
+| `npm run preview` | Serve `out/` with PHP's built-in server on <http://127.0.0.1:8080> (requires PHP) |
 | `npm run lint` | ESLint (Next.js + React Hooks + TypeScript rules) |
 | `npm run typecheck` | Generate route types and run `tsc --noEmit` |
 | `npm run check` | Lint + typecheck + build — run before every push |
@@ -56,9 +58,7 @@ src/
     page.tsx                Home
     expertise/              /expertise and /expertise/[slug] (4 service pages)
     technologies/  projects/  about/  contact/  privacy/  legal/
-    api/contact/route.ts    Contact form backend (validation, spam, rate limit, email)
     sitemap.ts  robots.ts  opengraph-image.tsx  icon.svg  not-found.tsx
-  proxy.ts                  Returns real 404s for unknown expertise/project slugs
   components/
     layout/                 SiteHeader, MobileNavigation, SiteFooter
     home/                   Homepage sections (Hero, Process, Services, CTA, …)
@@ -67,9 +67,14 @@ src/
     illustrations/          Lightweight SVG technical illustrations
     service/  projects/  contact/  ui/
   content/                  ALL editable copy: site facts, expertise, projects, home
-  lib/                      contact schema, email, rate limit, SEO helpers
+  lib/                      contact schema (shared rules), SEO helpers
   i18n/config.ts            Locale configuration (English now, French-ready)
-public/images/              Pre-rendered robot posters (WebGL fallback)
+public/
+  api/contact.php           Contact form backend (validation, spam, rate limit, SMTP)
+  .htaccess                 HTTPS + canonical host, security headers, 404, caching
+  images/                   Pre-rendered robot posters (WebGL fallback)
+deploy/                     synthea-contact-config.example.php (SMTP settings template)
+.github/workflows/          Build & publish to the hostinger-deploy branch
 ```
 
 ## Editing content
@@ -95,62 +100,53 @@ All text lives in `src/content/` — no copy is hard-coded in layout components.
 
 ## Contact form
 
-Flow: browser validation (Zod via React Hook Form) → `POST /api/contact` (multipart) → server
-re-validates with the same Zod schema → email to `CONTACT_TO_EMAIL`. The success screen appears
-**only** after the server confirms delivery to the email provider.
+Flow: browser validation (Zod via React Hook Form) → `POST /api/contact.php` (multipart) → PHP
+re-validates with the same rules as `src/lib/contact-schema.ts` → email to Synthea through Hostinger
+SMTP. The success screen appears **only** after the server confirms the message was accepted by the
+mail server.
 
 Protections:
 
 - **Spam:** hidden honeypot field + minimum fill time (3 s). Bots get a fake success; nothing is sent.
-- **Rate limiting:** 5 submissions per IP per 15 minutes (in-memory; see note below).
+- **Rate limiting:** 5 submissions per IP per 15 minutes (hashed IPs in a folder outside `public_html`).
 - **CSRF:** cross-origin `Origin` headers are rejected.
-- **Secrets:** API keys/SMTP passwords are read only on the server; nothing is exposed to the browser.
-- **Attachments (optional):** off by default. With `CONTACT_ATTACHMENTS_ENABLED=true`, one file up to
+- **Secrets:** SMTP credentials live in `synthea-contact-config.php` **outside `public_html`** on the
+  server — never in git, never downloadable.
+- **Header injection:** all header values are stripped of line breaks; subjects are encoded.
+- **Attachments (optional):** off by default. With `'attachments_enabled' => true`, one file up to
   8 MB (PDF, PNG, JPG, STEP/STP, STL, DXF, ZIP, DOCX, XLSX) is checked by extension, size and file
-  signature, held in memory and forwarded with the email — never written to disk. When disabled, the
-  form explains how to share documents instead.
-- **GDPR:** required consent checkbox linked to `/privacy`; no database storage; no tracking cookies.
+  signature and forwarded with the email — never kept on the server. When disabled, the form explains
+  how to share documents instead. The browser asks `GET /api/contact.php` whether they are enabled.
+- **GDPR:** required consent checkbox linked to `/privacy`; no database; no tracking cookies.
 
-The browser reads `GET /api/contact` to know at runtime whether attachments are enabled, so changing
-that variable only needs a restart, not a rebuild.
+### Email setup
 
-> Rate limiting is in-memory, which is correct for a single Node.js process (Hostinger Node.js apps,
-> a VPS with PM2). For multi-instance/serverless hosting, swap `src/lib/rate-limit.ts` for a shared store.
-
-### Email setup — option A: Resend
-
-1. Create an account at <https://resend.com> and add the domain `syntheatech.com`.
-2. Add the DNS records Resend shows (SPF/DKIM TXT, optional MX for bounces) in
-   **Hostinger hPanel → Domains → syntheatech.com → DNS / Nameservers**. Wait until Resend shows *Verified*.
-3. Create an API key with *Sending access* and set:
-   `EMAIL_PROVIDER=resend`, `RESEND_API_KEY=…`, `CONTACT_FROM_EMAIL="Synthea Website <noreply@syntheatech.com>"`.
-
-### Email setup — option B: SMTP (e.g. Hostinger Email)
-
-If `sadhan-jyoti.dutta@syntheatech.com` is a Hostinger mailbox, you can send through it directly:
-
-```
-EMAIL_PROVIDER=smtp
-SMTP_HOST=smtp.hostinger.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=noreply@syntheatech.com      # or any mailbox you own
-SMTP_PASS=<mailbox password>
-CONTACT_FROM_EMAIL="Synthea Website <noreply@syntheatech.com>"
-```
-
-`CONTACT_FROM_EMAIL` must be the SMTP mailbox (or an alias it may send as).
+See [docs/DEPLOYMENT.md §3](docs/DEPLOYMENT.md#3-one-time-contact-form-email): create a mailbox such as
+`noreply@syntheatech.com`, fill in `deploy/synthea-contact-config.example.php`, save it as
+`synthea-contact-config.php` and upload it to the folder **above** `public_html`.
 
 ### Testing the form
 
-1. Locally: run `npm run build && npm start` with credentials in `.env.local`, submit the form at
-   `/contact`, and confirm the email arrives with a working *Reply-To*.
-2. Validation: submit empty → field errors; invalid email → error; no consent → error.
-3. Preselection: open `/contact?category=simulation` → *Simulation & Modeling* is preselected
-   (the "Request a Consultation" links use this).
-4. Failure path: use a wrong API key → the form shows an error with the direct email address
-   and the server logs `[contact] Email delivery failed`.
-5. Rate limit: six quick submissions from one IP → the sixth returns HTTP 429.
+Locally (needs PHP 7.4+):
+
+```bash
+npm run build
+```
+
+```bash
+npm run preview
+```
+
+For a local test, put a `contact-config.php` (same format as the template) in `out/api/` — it is
+git-ignored and blocked from the web by `api/.htaccess`. Then open <http://127.0.0.1:8080/contact/>.
+
+On the live site:
+
+1. `https://syntheatech.com/api/contact.php` shows `"configured":true`.
+2. Submit empty → field errors; invalid email → error; no consent → error.
+3. `/contact/?category=simulation` preselects *Simulation & Modeling* (used by "Request a Consultation").
+4. Send a real inquiry and confirm it arrives with a working *Reply-To*.
+5. Six quick submissions → the sixth is refused with HTTP 429.
 
 ## Visualizations
 
@@ -188,5 +184,6 @@ move routes under `src/app/[lang]/`, and add `hreflang` alternates in `src/lib/s
 
 ## Deployment
 
-See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)** for Hostinger setup, domain/HTTPS, environment
-variables and alternatives.
+Push/merge to `main` → GitHub Action builds `out/` → branch `hostinger-deploy` → Hostinger Git
+auto-deploys into `public_html`. Full one-time setup (Git connection, webhook, email config, SSL) in
+**[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.

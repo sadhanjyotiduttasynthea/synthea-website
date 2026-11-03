@@ -1,109 +1,117 @@
-# Deployment — syntheatech.com on Hostinger
+# Deployment — syntheatech.com on Hostinger (Premium plan)
 
-This site is a **Next.js server application**. It needs a Node.js runtime for the contact-form API
-(`/api/contact`), the 404 proxy and image optimization. It is **not** a static export.
+The site is built as **static files** (Next.js static export) plus one **PHP script** for the contact
+form. This runs on every Hostinger plan, including **Premium** (PHP/HTML websites). No Node.js
+hosting is required.
 
-## 1. Check your Hostinger plan
+```
+GitHub main ──(GitHub Action: npm run build)──► branch hostinger-deploy ──(Hostinger Git)──► public_html
+```
 
-Hostinger runs Node.js web apps (including Next.js deployed from GitHub) on these plans only:
+What ends up in `public_html`:
 
-| Plan | Can run this site? |
-| --- | --- |
-| Business Web Hosting | Yes — Node.js Web Apps |
-| Cloud Startup / Professional / Enterprise / Enterprise Plus | Yes — Node.js Web Apps |
-| VPS (any) | Yes — run it yourself with Node.js + PM2 + Nginx (see §6) |
-| Single / Premium Web Hosting | **No** — no Node.js runtime. Upgrade, or use an alternative (see §7) |
+```
+public_html/
+  index.html, about/, contact/, expertise/ …   static pages
+  _next/                                       scripts, styles, fonts (content-hashed)
+  images/                                      robot renders
+  api/contact.php                              contact form backend
+  api/.htaccess                                blocks access to any config file
+  .htaccess                                    HTTPS, security headers, 404 page, caching
+  404.html  sitemap.xml  robots.txt  opengraph-image
+```
 
-Check this in **hPanel → Hosting → your plan**. Current reference:
-<https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger>.
+## 1. One-time: get the code into `main`
 
-> Hostinger deploys Node.js apps as a *new website*. If `syntheatech.com` already exists in hPanel
-> as a regular (PHP/WordPress/static) site, remove that site first, or add the domain fresh through
-> the Node.js flow below. Back up anything you need beforehand. Your email mailboxes and DNS are not
-> part of the website and are unaffected.
+Merge the pull request into `main` on GitHub. Every push to `main` then runs the workflow
+**Build & publish for Hostinger** (`.github/workflows/deploy-hostinger.yml`), which builds the site
+and publishes the result to the branch **`hostinger-deploy`**. Check its progress in the repository's
+**Actions** tab; the first run creates the branch.
 
-## 2. Deploy from GitHub (Business / Cloud plans)
+> If the Actions tab says workflows need approval, click **Enable / I understand** once.
+> In **Settings → Actions → General → Workflow permissions** choose **Read and write permissions**.
 
-1. In hPanel: **Websites → Add website → Node.js Apps** (labels may vary slightly).
-2. Choose **Import Git repository**, authorize the Hostinger GitHub app and select
-   `sadhanjyotiduttasynthea/synthea-website` (private repositories are supported once access is granted).
-3. Branch: `main`.
-4. Build settings (usually auto-detected for Next.js):
-   - Framework preset: **Next.js**
-   - Node.js version: **22.x** (20.x also works; the minimum is 20.9)
-   - Install command: `npm ci`
-   - Build command: `npm run build`
-   - Start command: `npm start`
-   - Root / output directory: leave default (project root; Next.js uses `.next`)
-5. Add the **environment variables** (next section) *before* the first build.
-6. Attach the domain `syntheatech.com` (and `www.syntheatech.com`) and deploy.
+## 2. One-time: connect Hostinger to GitHub
 
-After this, every push to `main` triggers an automatic redeploy. Work happens on feature branches
-and is merged into `main` when approved.
+In hPanel open the existing PHP/HTML website (`syntheatech-com-….hostingersite.com` / `syntheatech.com`):
 
-## 3. Environment variables (production)
+1. **Empty `public_html` first.** Hostinger's Git deployment only works into an empty folder:
+   *Files → File Manager → public_html* → select everything (including the default
+   `default.php`/`index.html`) → Delete.
+2. Go to **Advanced → Git** (on the website's dashboard sidebar).
+3. **Create a new repository**:
+   - Repository: `https://github.com/sadhanjyotiduttasynthea/synthea-website.git`
+   - Branch: **`hostinger-deploy`**
+   - Directory: leave empty (deploys into `public_html`)
+   - Click **Create**.
+4. **Private repository?** Hostinger shows an **SSH key** on the same page. Copy it, then on GitHub
+   go to the repository → **Settings → Deploy keys → Add deploy key**, paste it (read-only), save.
+   Use the SSH URL `git@github.com:sadhanjyotiduttasynthea/synthea-website.git` in step 3 instead.
+5. Click **Deploy** next to the repository in hPanel. The site files appear in `public_html`.
+6. **Auto deployment:** click **Auto Deployment** in hPanel and copy the **Webhook URL**. On GitHub:
+   repository → **Settings → Webhooks → Add webhook** → paste it as *Payload URL*,
+   content type `application/json`, *Just the push event* → **Add webhook**.
 
-Set these in the Node.js app's **Environment variables** panel. Never commit them.
+From now on: merge/push to `main` → GitHub Action builds → `hostinger-deploy` updates → webhook →
+Hostinger pulls the new files. Usually live within 2–3 minutes.
 
-| Variable | Required | Example / notes |
-| --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | yes | `https://syntheatech.com` (used at **build** time; redeploy after changing) |
-| `CONTACT_TO_EMAIL` | yes | `sadhan-jyoti.dutta@syntheatech.com` |
-| `CONTACT_FROM_EMAIL` | yes | `Synthea Website <noreply@syntheatech.com>` — must be on a verified domain / your SMTP mailbox |
-| `EMAIL_PROVIDER` | recommended | `resend` or `smtp` |
-| `RESEND_API_KEY` | if Resend | from resend.com → API Keys |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS` | if SMTP | Hostinger Email: `smtp.hostinger.com`, `465`, `true` |
-| `CONTACT_ATTACHMENTS_ENABLED` | optional | `true` to accept one file ≤ 8 MB per inquiry (runtime; restart only) |
+### Manual alternative (no Git)
 
-See the README for Resend vs SMTP setup and DNS records (SPF/DKIM).
+Download the `hostinger-deploy` branch as a ZIP from GitHub (*Code → Download ZIP*, choosing that
+branch), or use the `synthea-website-static.zip` provided, and in **File Manager → public_html**
+upload and **Extract** it so that `index.html` sits directly inside `public_html` (not in a sub-folder).
+
+## 3. One-time: contact form email
+
+The form sends through a Hostinger mailbox using authenticated SMTP.
+
+1. **Create a mailbox** in hPanel → **Emails** → `syntheatech.com`, e.g. `noreply@syntheatech.com`
+   (or use `sadhan-jyoti.dutta@syntheatech.com` itself). Note its password.
+2. Take `deploy/synthea-contact-config.example.php` from the repository, fill in `from_email`,
+   `smtp_user` (the mailbox address) and `smtp_pass` (its password), and save it as
+   **`synthea-contact-config.php`**.
+3. In **File Manager**, go **one level above `public_html`** (the folder that *contains*
+   `public_html`, typically `domains/syntheatech.com/`) and upload the file there.
+   It is then outside the website — it cannot be downloaded and deployments never overwrite it.
+4. Check: open `https://syntheatech.com/api/contact.php` — it should show
+   `{"attachmentsEnabled":false,"configured":true}`. `configured:false` means the file was not found
+   or a value is missing.
+5. To accept file attachments, set `'attachments_enabled' => true` in the same file.
+
+**Deliverability:** in hPanel → Emails → *Email deliverability* (or DNS), make sure SPF, DKIM and DMARC
+records for `syntheatech.com` are enabled so inquiries do not land in spam.
 
 ## 4. Domain and HTTPS
 
-- If the domain is registered at Hostinger, attaching it to the website configures DNS automatically.
-  Otherwise point the domain's **A record** (and `www` CNAME) to the values hPanel shows for the site.
-- In hPanel **Security → SSL**, install the free SSL certificate for `syntheatech.com` and
-  `www.syntheatech.com`, then enable **Force HTTPS**.
-- The app sends `Strict-Transport-Security`; enable it only once HTTPS works on both hostnames
-  (it is already in `next.config.ts` — remove the header there if you need to test over plain HTTP).
-- Choose one canonical host (`syntheatech.com`) and redirect `www` to it in hPanel.
+- In hPanel → the website → **Domains**, make sure `syntheatech.com` is connected to this website
+  (not only the temporary `…hostingersite.com` address).
+- **Security → SSL**: install the free SSL certificate for `syntheatech.com` and `www.syntheatech.com`.
+- `.htaccess` already redirects `http://` and `www.` to `https://syntheatech.com`.
+  If the site shows a redirect loop, the SSL certificate is not active yet — wait until it is issued.
 
-## 5. After each deployment — checklist
+## 5. Checklist after deployment
 
-- [ ] `https://syntheatech.com` loads, the 3D robot appears and the REAL / CAD / ANALYSIS switch works.
-- [ ] Every main navigation link and the Expertise dropdown work; mobile menu opens and closes.
-- [ ] `/expertise/does-not-exist` returns 404.
-- [ ] `/sitemap.xml` and `/robots.txt` show `https://syntheatech.com` URLs.
-- [ ] Submit a real test inquiry on `/contact`; the email arrives at `CONTACT_TO_EMAIL` and *Reply* goes to the sender.
-- [ ] Check the app logs in hPanel for `[contact]` errors.
+- [ ] `https://syntheatech.com` loads; the 3D robot appears and REAL / CAD / ANALYSIS switch works.
+- [ ] Navigation, Expertise dropdown and mobile menu work; every page opens.
+- [ ] `https://syntheatech.com/does-not-exist` shows the SYNTHEA 404 page.
+- [ ] `https://syntheatech.com/api/contact.php` shows `"configured":true`.
+- [ ] A real test inquiry from `/contact/` arrives at `sadhan-jyoti.dutta@syntheatech.com`, and replying
+      goes to the sender.
+- [ ] `https://syntheatech.com/sitemap.xml` lists `https://syntheatech.com/…` URLs.
 
-Only consider the deployment successful once the test inquiry has actually arrived.
+Only consider the launch complete once the test inquiry has arrived.
 
-## 6. VPS alternative (Hostinger VPS)
+## Troubleshooting
 
-```bash
-git clone https://github.com/sadhanjyotiduttasynthea/synthea-website.git
-```
+| Symptom | Fix |
+| --- | --- |
+| "Unable to identify your website" on import | The ZIP contained source code, not the built site. Deploy the `hostinger-deploy` branch (or the static ZIP) so `index.html` is directly in `public_html`. |
+| Git deploy fails: directory not empty | Empty `public_html` completely (§2 step 1), then deploy again. |
+| Form says "temporarily unavailable" | `synthea-contact-config.php` missing or incomplete — see §3 step 4. |
+| Form says "could not send" | Wrong mailbox password or SMTP blocked; check *File Manager → logs* / PHP error log for `[contact] Email delivery failed`. As a fallback set `'transport' => 'mail'`. |
+| Old version still showing | Hard-refresh the browser; HTML is never cached long, so this clears after a reload. |
 
-```bash
-cd synthea-website && npm ci && npm run build
-```
+## Moving to Node.js hosting later
 
-```bash
-PORT=3000 npx pm2 start npm --name synthea -- start
-```
-
-Put Nginx in front as a reverse proxy to `127.0.0.1:3000`, use Certbot for HTTPS, and store the
-environment variables in an `.env.production.local` file on the server (not in git).
-
-## 7. If the plan has no Node.js (Single / Premium)
-
-Options that keep the working contact form:
-
-1. **Upgrade** to Business Web Hosting or a Cloud plan (simplest; keeps everything at Hostinger).
-2. **Host the app on Vercel** (free tier is sufficient to start; native Next.js support), import the
-   same GitHub repository, set the same environment variables, and keep the domain + email at Hostinger:
-   in Hostinger DNS add the A/CNAME records Vercel shows. Note: the in-memory rate limiter should then be
-   replaced with a shared store (e.g. Upstash Redis) because Vercel runs multiple instances.
-
-A pure static export to `public_html` is **not** recommended: it would drop the server-side contact
-form, which is why it is not offered here.
+If the plan is upgraded to one with Web Apps (Node.js), the site can keep running exactly as it is
+(static + PHP). Nothing needs to change.
