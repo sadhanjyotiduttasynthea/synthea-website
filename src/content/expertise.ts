@@ -1,4 +1,4 @@
-import type { ProjectCategory } from "@/lib/contact-schema";
+import type { InquiryType } from "@/lib/contact-schema";
 
 export type IllustrationKey = "robotics" | "design" | "simulation" | "automation";
 
@@ -13,7 +13,7 @@ export type Expertise = {
   seoTitle: string;
   seoDescription: string;
   illustration: IllustrationKey;
-  contactCategory: ProjectCategory;
+  contactType: InquiryType;
   capabilities: { title: string; text: string }[];
   challenges: string[];
   applications: { title: string; text: string }[];
@@ -34,7 +34,7 @@ export const expertise: Expertise[] = [
     seoDescription:
       "Custom robotic systems, precision motion mechanisms, robotic control and prototyping by Synthea Advanced Technologies, France.",
     illustration: "robotics",
-    contactCategory: "robotics",
+    contactType: "robotics",
     capabilities: [
       {
         title: "Custom robotic systems",
@@ -103,21 +103,24 @@ export const expertise: Expertise[] = [
     slug: "engineering-design",
     title: "Engineering Design",
     cardTitle: "Engineering Design",
-    summary: "Mechanical engineering, industrial product design, CAD, and prototype development.",
+    summary: "Machine design, mechanical engineering, product design, CAD, and prototype development.",
     headline: "Designed with Precision. Built for Purpose.",
     intro:
-      "From first concept to manufacturing-ready drawings, we engineer mechanical products, assemblies and custom machines that are robust, efficient and buildable.",
+      "From first concept to manufacturing-ready drawings, we design machines, mechanical products and assemblies that are robust, efficient and buildable.",
     seoTitle: "Mechanical Engineering Design Services",
     seoDescription:
       "Mechanical product design, 3D CAD modeling, assemblies, technical drawings, custom machines and design for manufacturing by Synthea, France.",
     illustration: "design",
-    contactCategory: "mechanical-design",
+    contactType: "engineering-design",
     capabilities: [
+      {
+        title: "Machine design",
+        text: "Special-purpose machines and production equipment — food-tech machines, automation cells, handling devices and test rigs — designed from concept to manufacturing drawings.",
+      },
       { title: "Mechanical product design", text: "Functional, manufacturable products designed from requirements through to detailed parts." },
       { title: "3D CAD modeling", text: "Parametric part and assembly models structured so they stay easy to modify." },
       { title: "Assemblies & mechanisms", text: "Multi-part assemblies, motion mechanisms, interfaces and tolerance considerations." },
       { title: "Technical drawings", text: "Manufacturing drawings with dimensions, tolerances and notes for suppliers." },
-      { title: "Custom machines & equipment", text: "Special-purpose industrial equipment, fixtures and test rigs." },
       { title: "Design for manufacturing", text: "Choosing processes, materials and geometries that reduce cost and production risk." },
     ],
     challenges: [
@@ -170,7 +173,7 @@ export const expertise: Expertise[] = [
     seoDescription:
       "Thermal simulation, CFD, finite element analysis, multiphysics modeling, digital twins and process modeling by Synthea Advanced Technologies.",
     illustration: "simulation",
-    contactCategory: "simulation",
+    contactType: "simulation",
     capabilities: [
       { title: "Heat transfer & thermal analysis", text: "Conduction, convection and radiation in components, equipment and thermal processes." },
       { title: "Computational fluid dynamics", text: "Flow fields, pressure losses, mixing and convective heat transfer." },
@@ -229,7 +232,7 @@ export const expertise: Expertise[] = [
     seoDescription:
       "Industrial automation architecture, motion systems, intelligent machine design, digital workflows and process optimization by Synthea, France.",
     illustration: "automation",
-    contactCategory: "automation",
+    contactType: "automation",
     capabilities: [
       { title: "Automation architecture", text: "Structuring sensors, actuators, controllers and software into a coherent system." },
       { title: "Motion systems", text: "Axes, drives and motion sequences for automated equipment." },

@@ -45,7 +45,13 @@ export function organizationJsonLd() {
     description: site.description,
     email: site.email,
     founder: { "@type": "Person", name: site.founder.name, jobTitle: site.founder.role },
-    address: { "@type": "PostalAddress", addressCountry: "FR" },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: `${site.address.building}, ${site.address.street}`,
+      postalCode: site.address.postalCode,
+      addressLocality: site.address.city,
+      addressCountry: "FR",
+    },
     areaServed: "Worldwide",
     knowsAbout: [
       "Robotics engineering",
@@ -53,6 +59,8 @@ export function organizationJsonLd() {
       "Computational simulation",
       "Multiphysics engineering",
       "Industrial automation",
+      "Machine design",
+      "3D food printing",
       "Engineering research and development",
     ],
   };

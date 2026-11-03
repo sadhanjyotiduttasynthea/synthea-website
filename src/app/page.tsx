@@ -8,6 +8,8 @@ import { TechnologySpotlight } from "@/components/home/TechnologySpotlight";
 import { ServicesSection } from "@/components/home/ServicesSection";
 import { ProjectsSection } from "@/components/home/ProjectsSection";
 import { CTASection } from "@/components/home/CTASection";
+import { Supporters } from "@/components/home/Supporters";
+import { ProductsSection } from "@/components/home/ProductsSection";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -22,12 +24,14 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <Supporters />
       <IntroSection />
       <ExpertiseSection />
       <ProcessSection />
       <SimulationSection />
       <TechnologySpotlight />
-      <ServicesSection />
+      <ProductsSection index="05" />
+      <ServicesSection index="06" />
       <ProjectsSection />
       <CTASection />
     </>

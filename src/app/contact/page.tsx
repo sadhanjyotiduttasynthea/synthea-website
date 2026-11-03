@@ -6,14 +6,15 @@ import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Contact — Start an Engineering Project",
+  title: "Start Your Project — Rentals, Machine Design & Engineering",
   description:
-    "Tell Synthea about your engineering challenge: custom robotics, mechanical design, simulation, industrial automation, prototyping or R&D collaboration.",
+    "Rent a Synthea machine (chocolate 3D printer, ice-cream robot, cookie automation, delivery robots) or start an engineering project: machine design, robotics, simulation, automation.",
   path: "/contact",
 });
 
 const steps = [
-  { title: "We read every inquiry", text: "Your message goes directly to the founder." },
+  { title: "Instant confirmation", text: "You receive an automatic confirmation email as soon as you submit." },
+  { title: "We read every request", text: "Your message goes directly to our CEO." },
   { title: "Initial conversation", text: "We clarify goals, constraints and what success looks like." },
   { title: "Proposal", text: "A scoped proposal with approach, deliverables and next steps." },
 ];
@@ -22,10 +23,15 @@ export default function ContactPage() {
   return (
     <>
       <PageHero
-        eyebrow="Contact"
+        eyebrow="Start your project"
         title="Let's Build What's Next."
         crumbs={[{ label: "Contact", href: "/contact" }]}
-        intro={<p>Tell us about your engineering challenge, idea, or project.</p>}
+        intro={
+          <p>
+            Rent one of our products, get engineering design help, or tell us about your engineering challenge. Choose
+            what you are looking for, share your budget — you will receive a confirmation by email.
+          </p>
+        }
       />
 
       <section aria-label="Project inquiry" className="section-y bg-surface !pt-12 lg:!pt-16">
@@ -46,7 +52,15 @@ export default function ContactPage() {
                 </li>
                 <li className="flex gap-3">
                   <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-red" />
-                  <span>{site.country}</span>
+                  <address className="not-italic leading-relaxed">
+                    {site.address.building}
+                    <br />
+                    {site.address.street}
+                    <br />
+                    {site.address.postalCode} {site.address.city}
+                    <br />
+                    {site.address.country}
+                  </address>
                 </li>
               </ul>
             </div>

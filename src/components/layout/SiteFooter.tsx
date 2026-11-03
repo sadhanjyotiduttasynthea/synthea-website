@@ -17,7 +17,13 @@ export function SiteFooter() {
           >
             {site.email}
           </a>
-          <p className="mt-2 text-sm text-metal">Based in {site.country}</p>
+          <address className="mt-3 text-sm not-italic leading-relaxed text-metal">
+            {site.address.building}
+            <br />
+            {site.address.street}, {site.address.postalCode} {site.address.city}
+            <br />
+            {site.address.country}
+          </address>
         </div>
 
         <nav aria-label="Footer — site" className="md:col-span-2">
@@ -44,8 +50,8 @@ export function SiteFooter() {
               </li>
             ))}
             <li>
-              <Link href="/technologies" className="inline-flex min-h-9 items-center text-sm text-white/85 hover:text-white">
-                Technologies
+              <Link href="/products" className="inline-flex min-h-9 items-center text-sm text-white/85 hover:text-white">
+                Products &amp; rentals
               </Link>
             </li>
           </ul>

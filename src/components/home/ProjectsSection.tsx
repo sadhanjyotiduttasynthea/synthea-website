@@ -9,7 +9,7 @@ export function ProjectsSection() {
       <div className="container-site">
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <SectionLabel index="06">Projects</SectionLabel>
+            <SectionLabel index="07">Projects</SectionLabel>
             <AnimatedHeading id="projects-title" text="Selected Engineering Projects." className="mt-6 max-w-3xl text-h2 font-semibold" />
           </div>
           <ButtonLink href="/projects" variant="secondary">

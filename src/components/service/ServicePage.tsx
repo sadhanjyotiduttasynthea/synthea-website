@@ -10,10 +10,11 @@ import { ButtonLink } from "@/components/ui/ButtonLink";
 import { ServiceIllustration } from "@/components/illustrations/ServiceIllustrations";
 import { CTASection } from "@/components/home/CTASection";
 import { FAQ } from "./FAQ";
+import { projectLink } from "@/lib/contact-schema";
 
 export function ServicePage({ service }: { service: Expertise }) {
   const others = expertise.filter((e) => e.slug !== service.slug);
-  const consult = `/contact?category=${service.contactCategory}#inquiry`;
+  const consult = projectLink(service.contactType);
 
   return (
     <>
