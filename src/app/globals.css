@@ -19,19 +19,19 @@
   --color-line: #e5e7eb;
   --color-line-dark: #26292f;
 
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-code), ui-monospace, monospace;
 
   /* Type scale (fluid) */
-  --text-display: clamp(2.75rem, 1.6rem + 5.2vw, 6.25rem);
-  --text-display--line-height: 0.98;
-  --text-display--letter-spacing: -0.045em;
-  --text-h1: clamp(2.4rem, 1.6rem + 3.4vw, 4.5rem);
-  --text-h1--line-height: 1.02;
-  --text-h1--letter-spacing: -0.04em;
-  --text-h2: clamp(2rem, 1.45rem + 2.3vw, 3.5rem);
-  --text-h2--line-height: 1.05;
-  --text-h2--letter-spacing: -0.035em;
+  --text-display: clamp(2.1rem, 1rem + 3.5vw, 4.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.03em;
+  --text-h1: clamp(1.95rem, 1.2rem + 2.6vw, 3.6rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h2: clamp(1.6rem, 1.15rem + 1.75vw, 2.75rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.02em;
   --text-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
   --text-h3--line-height: 1.2;
   --text-h3--letter-spacing: -0.02em;
@@ -62,8 +62,15 @@ body {
   background: var(--color-white);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-feature-settings: "ss01", "cv11";
   text-rendering: optimizeLegibility;
+}
+
+/* Futuristic display face for page and section headings */
+h1,
+h2,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 500;
 }
 
 ::selection {
@@ -148,15 +155,15 @@ body {
 
 @keyframes scan {
   0% {
-    transform: translateY(-10%);
+    top: 0%;
     opacity: 0;
   }
-  15%,
-  85% {
+  10%,
+  90% {
     opacity: 1;
   }
   100% {
-    transform: translateY(110%);
+    top: 100%;
     opacity: 0;
   }
 }
@@ -167,6 +174,16 @@ body {
   }
 }
 
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 42s linear infinite;
+}
+
 .animate-grid-drift {
   animation: grid-drift 14s linear infinite;
 }
@@ -174,7 +191,7 @@ body {
   animation: dash-flow 2.4s linear infinite;
 }
 .animate-scan {
-  animation: scan 4.5s var(--ease-precise) infinite;
+  animation: scan 7s ease-in-out infinite;
 }
 .animate-spin-slow {
   animation: spin-slow 24s linear infinite;

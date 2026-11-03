@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { ScrambleText } from "./ScrambleText";
 
 type Props = { index?: string; children: React.ReactNode; tone?: "light" | "dark"; className?: string };
 
@@ -15,7 +16,7 @@ export function SectionLabel({ index, children, tone = "light", className }: Pro
       <span aria-hidden className="h-px w-8 bg-red" />
       {index && <span className={tone === "dark" ? "text-red-bright" : "text-red"}>{index}</span>}
       {index && <span aria-hidden>/</span>}
-      <span>{children}</span>
+      {typeof children === "string" ? <ScrambleText text={children} /> : <span>{children}</span>}
     </p>
   );
 }

@@ -13,6 +13,9 @@
     "prebuild": "node scripts/prepare-brand-assets.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/sora": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
     "@hookform/resolvers": "^5.9.2",
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",

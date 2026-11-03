@@ -34,7 +34,7 @@ export function CTASection({
           as="h2"
           id="cta-title"
           text={title}
-          className="mt-6 max-w-4xl text-[length:var(--text-display)] font-semibold leading-[0.98] tracking-[-0.045em]"
+          className="mt-6 max-w-4xl text-[length:var(--text-display)] font-medium leading-[1.04] tracking-[-0.03em]"
         />
         <p className="mt-8 max-w-xl text-lead text-metal">
           {text}
