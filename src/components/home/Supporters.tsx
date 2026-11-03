@@ -37,7 +37,7 @@ export function Supporters({ tone = "light", className }: { tone?: "light" | "su
                 aria-label={`${s.name} (opens in a new tab)`}
               >
                 {logo ? (
-                  <Image src={logo.src} alt={s.name} width={logo.width} height={logo.height} className="h-14 w-auto object-contain sm:h-16" />
+                  <Image src={logo.src} alt={s.name} width={logo.width} height={logo.height} className="h-16 w-auto object-contain sm:h-20" />
                 ) : (
                   <span className="text-2xl font-semibold tracking-tight text-ink group-hover:text-red">{s.name}</span>
                 )}
