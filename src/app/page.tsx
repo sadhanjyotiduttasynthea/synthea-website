@@ -10,6 +10,7 @@ import { ProjectsSection } from "@/components/home/ProjectsSection";
 import { CTASection } from "@/components/home/CTASection";
 import { Supporters } from "@/components/home/Supporters";
 import { ProductsSection } from "@/components/home/ProductsSection";
+import { Marquee } from "@/components/home/Marquee";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -26,6 +27,7 @@ export default function HomePage() {
       <HeroSection />
       <Supporters />
       <IntroSection />
+      <Marquee />
       <ExpertiseSection />
       <ProcessSection />
       <SimulationSection />

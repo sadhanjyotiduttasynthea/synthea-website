@@ -1,12 +1,32 @@
 import type { Metadata, Viewport } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import localFont from "next/font/local";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { MotionProvider } from "@/components/ui/MotionProvider";
+import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { site } from "@/content/site";
 import { jsonLd, organizationJsonLd } from "@/lib/seo";
 import "./globals.css";
+
+/* Self-hosted fonts (bundled at build time, no requests to third-party servers). */
+const display = localFont({
+  src: "../../node_modules/@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2",
+  variable: "--font-display",
+  weight: "200 900",
+  display: "swap",
+});
+const body = localFont({
+  src: "../../node_modules/@fontsource-variable/sora/files/sora-latin-wght-normal.woff2",
+  variable: "--font-body",
+  weight: "100 800",
+  display: "swap",
+});
+const mono = localFont({
+  src: "../../node_modules/@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2",
+  variable: "--font-code",
+  weight: "100 800",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -50,10 +70,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable} antialiased`}>
       <body className="flex min-h-dvh flex-col">
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(organizationJsonLd())} />
         <MotionProvider>
+          <ScrollProgress />
           <SiteHeader />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {children}

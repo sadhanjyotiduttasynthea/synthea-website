@@ -62,7 +62,7 @@ export default function AboutPage() {
             Our mission
           </h2>
           <Reveal>
-            <blockquote className="mt-10 max-w-5xl text-[clamp(1.75rem,1.1rem+2.6vw,3.5rem)] font-medium leading-[1.12] tracking-[-0.03em]">
+            <blockquote className="mt-10 max-w-5xl text-[clamp(1.75rem,1.1rem+2.6vw,3.5rem)] font-medium leading-[1.12] tracking-[-0.02em] font-display">
               <span className="text-red">“</span>To develop intelligent engineering technologies that make advanced robotics,
               simulation, and automation more accessible and impactful.<span className="text-red">”</span>
             </blockquote>

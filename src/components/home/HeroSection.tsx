@@ -2,12 +2,13 @@ import { AnimatedHeading } from "@/components/ui/AnimatedHeading";
 import { ButtonLink } from "@/components/ui/ButtonLink";
 import { Reveal } from "@/components/ui/Reveal";
 import { HeroVisual } from "@/components/three/HeroVisual";
+import { HeroBackdrop } from "./HeroBackdrop";
 import { site } from "@/content/site";
 
 export function HeroSection() {
   return (
     <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-white pt-[var(--header-h)]">
-      <div aria-hidden className="tech-grid absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_at_70%_40%,black_10%,transparent_70%)]" />
+      <HeroBackdrop />
       <div className="container-site grid min-h-[calc(100svh-var(--header-h))] items-center gap-8 py-10 lg:grid-cols-12 lg:gap-6 lg:py-0">
         <div className="relative z-10 lg:col-span-6 xl:col-span-6">
           <Reveal y={10}>
@@ -22,7 +23,7 @@ export function HeroSection() {
             immediate
             delay={0.1}
             text={site.tagline}
-            className="mt-7 text-[length:var(--text-display)] font-semibold leading-[0.98] tracking-[-0.045em]"
+            className="mt-7 text-[length:var(--text-display)] font-medium leading-[1.04] tracking-[-0.03em]"
           />
           <Reveal delay={0.45} y={12}>
             <p className="mt-7 font-mono text-sm uppercase tracking-[0.18em] text-ink">
